@@ -17,10 +17,12 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Rectangle;
 import ru.mipt.bit.platformer.util.TileMovement;
 
-import static com.badlogic.gdx.Input.Keys.*;
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
-import static com.badlogic.gdx.math.MathUtils.isEqual;
-import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
+import static ru.mipt.bit.platformer.util.GdxGameUtils.createBoundingRectangle;
+import static ru.mipt.bit.platformer.util.GdxGameUtils.createSingleLayerMapRenderer;
+import static ru.mipt.bit.platformer.util.GdxGameUtils.drawTextureRegionUnscaled;
+import static ru.mipt.bit.platformer.util.GdxGameUtils.getSingleLayer;
+import static ru.mipt.bit.platformer.util.GdxGameUtils.moveRectangleAtTileCenter;
 
 public class GameDesktopLauncher implements ApplicationListener {
 
@@ -53,13 +55,11 @@ public class GameDesktopLauncher implements ApplicationListener {
     @Override
     public void create() {
         batch = new SpriteBatch();
-
         // load level tiles
         level = new TmxMapLoader().load("level.tmx");
         levelRenderer = createSingleLayerMapRenderer(level, batch);
         TiledMapTileLayer groundLayer = getSingleLayer(level);
         tileMovement = new TileMovement(groundLayer, Interpolation.smooth);
-
         // Texture decodes an image file and loads it into GPU memory, it represents a native resource
         blueTankTexture = new Texture("images/tank_blue.png");
         // TextureRegion represents Texture portion, there may be many TextureRegion instances of the same Texture
