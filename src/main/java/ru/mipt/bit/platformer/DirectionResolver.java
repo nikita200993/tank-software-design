@@ -1,5 +1,7 @@
 package ru.mipt.bit.platformer;
 
+import java.util.Optional;
+
 public interface DirectionResolver {
-    Direction resolveDirection();
+    Optional<Direction> resolveDirection();
 }

@@ -1,12 +1,8 @@
 package ru.mipt.bit.platformer;
 
-import static ru.mipt.bit.platformer.util.GdxGameUtils.continueProgress;
-import static ru.mipt.bit.platformer.util.GdxGameUtils.decrementedX;
-import static ru.mipt.bit.platformer.util.GdxGameUtils.decrementedY;
-import static ru.mipt.bit.platformer.util.GdxGameUtils.incrementedX;
-import static ru.mipt.bit.platformer.util.GdxGameUtils.incrementedY;
-
 import com.badlogic.gdx.math.GridPoint2;
+
+import static ru.mipt.bit.platformer.util.GdxGameUtils.continueProgress;
 
 class Player {
     private final GridPoint2 currentPosition;
@@ -46,34 +42,9 @@ class Player {
         if (moveProgress != 1) {
             return;
         }
-        final GridPoint2 destination;
-        final float rotation;
-        switch (direction) {
-            case UP:
-                destination = new GridPoint2(incrementedY(currentPosition));
-                rotation = 90;
-                break;
-            case LEFT:
-                destination = new GridPoint2(decrementedX(currentPosition));
-                rotation = -180;
-                break;
-            case DOWN:
-                destination = new GridPoint2(decrementedY(currentPosition));
-                rotation = -90;
-                break;
-            case RIGHT:
-                destination = new GridPoint2(incrementedX(currentPosition));
-                rotation = 0;
-                break;
-            case NONE:
-                destination = null;
-                rotation = this.rotation;
-                break;
-            default:
-                throw new IllegalStateException("Unreachable switch branch.");
-        }
-        this.rotation = rotation;
-        if (destination != null && !obstacle.equals(destination)) {
+        this.rotation = direction.getRotation();
+        final GridPoint2 destination = direction.computeNextPosition(currentPosition);
+        if (!obstacle.equals(destination)) {
             this.moveProgress = 0;
             this.destinationPosition.set(destination);
         }
