@@ -2,7 +2,6 @@ package ru.mipt.bit.platformer;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.graphics.Texture;
@@ -29,6 +28,8 @@ public class GameDesktopLauncher implements ApplicationListener {
 
     private static final float MOVEMENT_SPEED = 0.4f;
 
+    private final DirectionResolver directionResolver;
+
     private Batch batch;
 
     private TiledMap level;
@@ -46,11 +47,15 @@ public class GameDesktopLauncher implements ApplicationListener {
     private GridPoint2 treeObstacleCoordinates = new GridPoint2();
     private Rectangle treeObstacleRectangle = new Rectangle();
 
+    public GameDesktopLauncher(final DirectionResolver directionResolver) {
+        this.directionResolver = directionResolver;
+    }
+
     public static void main(String[] args) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         // level width: 10 tiles x 128px, height: 8 tiles x 128px
         config.setWindowedMode(1280, 1024);
-        new Lwjgl3Application(new GameDesktopLauncher(), config);
+        new Lwjgl3Application(new GameDesktopLauncher(new DefaultGdxDirectionResolver()), config);
     }
 
     @Override
@@ -79,7 +84,7 @@ public class GameDesktopLauncher implements ApplicationListener {
         clearScreen();
         // get time passed since the last render
         float deltaTime = Gdx.graphics.getDeltaTime();
-        player.startMove(resolveDirection(), treeObstacleCoordinates);
+        player.startMove(directionResolver.resolveDirection(), treeObstacleCoordinates);
         // calculate interpolated player screen coordinates
         tileMovement.moveRectangleBetweenTileCenters(
                 playerRectangle,
@@ -127,19 +132,5 @@ public class GameDesktopLauncher implements ApplicationListener {
         drawTextureRegionUnscaled(batch, playerGraphics, playerRectangle, player.getRotation());
         drawTextureRegionUnscaled(batch, treeObstacleGraphics, treeObstacleRectangle, 0f);
         batch.end();
-    }
-
-    private static Direction resolveDirection() {
-        if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
-            return Direction.UP;
-        } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
-            return Direction.LEFT;
-        } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S)) {
-            return Direction.DOWN;
-        } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            return Direction.RIGHT;
-        } else {
-            return Direction.NONE;
-        }
     }
 }
