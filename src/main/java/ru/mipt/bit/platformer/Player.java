@@ -5,6 +5,9 @@ import com.badlogic.gdx.math.GridPoint2;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.continueProgress;
 
 class Player {
+
+    private final static float ACCURACY = 0.001f;
+
     private final GridPoint2 currentPosition;
     private final GridPoint2 destinationPosition;
     private float moveProgress = 1;
@@ -33,7 +36,8 @@ class Player {
 
     void updateProgress(final float time, final float moveSpeed) {
         moveProgress = continueProgress(moveProgress, time, moveSpeed);
-        if (moveProgress == 1) {
+        if (Math.abs(1 - moveProgress) < ACCURACY) {
+            moveProgress = 1;
             currentPosition.set(destinationPosition);
         }
     }
