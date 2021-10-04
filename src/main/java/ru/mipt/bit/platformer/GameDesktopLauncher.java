@@ -2,6 +2,7 @@ package ru.mipt.bit.platformer;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.graphics.Texture;
@@ -52,6 +53,20 @@ public class GameDesktopLauncher implements ApplicationListener {
         new Lwjgl3Application(new GameDesktopLauncher(), config);
     }
 
+    static Direction resolveDirection() {
+        if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
+            return Direction.UP;
+        } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
+            return Direction.LEFT;
+        } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S)) {
+            return Direction.DOWN;
+        } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            return Direction.RIGHT;
+        } else {
+            return Direction.NONE;
+        }
+    }
+
     @Override
     public void create() {
         batch = new SpriteBatch();
@@ -78,7 +93,7 @@ public class GameDesktopLauncher implements ApplicationListener {
         clearScreen();
         // get time passed since the last render
         float deltaTime = Gdx.graphics.getDeltaTime();
-        player.startMove(Direction.resolveDirection(), treeObstacleCoordinates);
+        player.startMove(resolveDirection(), treeObstacleCoordinates);
         // calculate interpolated player screen coordinates
         tileMovement.moveRectangleBetweenTileCenters(
                 playerRectangle,
