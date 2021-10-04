@@ -11,7 +11,7 @@ enum Direction {
     RIGHT,
     NONE;
 
-    static Direction getDirection() {
+    static Direction resolveDirection() {
         if (Gdx.input.isKeyPressed(Keys.UP) || Gdx.input.isKeyPressed(Keys.W)) {
             return Direction.UP;
         } else if (Gdx.input.isKeyPressed(Keys.LEFT) || Gdx.input.isKeyPressed(Keys.A)) {
