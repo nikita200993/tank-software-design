@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import ru.mipt.bit.platformer.logic.Direction;
 
 public class DefaultGdxDirectionResolver implements DirectionResolver {
 
