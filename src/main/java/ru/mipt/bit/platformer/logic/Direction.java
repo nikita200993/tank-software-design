@@ -1,4 +1,4 @@
-package ru.mipt.bit.platformer;
+package ru.mipt.bit.platformer.logic;
 
 import com.badlogic.gdx.math.GridPoint2;
 
@@ -7,7 +7,7 @@ import static ru.mipt.bit.platformer.util.GdxGameUtils.decrementedY;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.incrementedX;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.incrementedY;
 
-enum Direction {
+public enum Direction {
     UP {
         @Override
         float getRotation() {

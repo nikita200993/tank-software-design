@@ -1,48 +1,49 @@
-package ru.mipt.bit.platformer;
+package ru.mipt.bit.platformer.logic;
 
 import com.badlogic.gdx.math.GridPoint2;
 
 import static ru.mipt.bit.platformer.util.GdxGameUtils.continueProgress;
 
-class Player {
+public class Player {
 
     private final static float ACCURACY = 0.001f;
+    private final static float MOVE_SPEED = 0.4f;
 
     private final GridPoint2 currentPosition;
     private final GridPoint2 destinationPosition;
     private float moveProgress = 1;
     private float rotation;
 
-    Player(final GridPoint2 currentPosition) {
+    public Player(final GridPoint2 currentPosition) {
         this.currentPosition = currentPosition;
         this.destinationPosition = currentPosition.cpy();
     }
 
-    GridPoint2 getCurrentPosition() {
+    public GridPoint2 getCurrentPosition() {
         return currentPosition;
     }
 
-    GridPoint2 getDestinationPosition() {
+    public GridPoint2 getDestinationPosition() {
         return destinationPosition;
     }
 
-    float getMoveProgress() {
+    public float getMoveProgress() {
         return moveProgress;
     }
 
-    float getRotation() {
+    public float getRotation() {
         return rotation;
     }
 
-    void updateProgress(final float time, final float moveSpeed) {
-        moveProgress = continueProgress(moveProgress, time, moveSpeed);
+    public void updateProgress(final float time) {
+        moveProgress = continueProgress(moveProgress, time, MOVE_SPEED);
         if (Math.abs(1 - moveProgress) < ACCURACY) {
             moveProgress = 1;
             currentPosition.set(destinationPosition);
         }
     }
 
-    void startMove(final Direction direction, final GridPoint2 obstacle) {
+    public void startMove(final Direction direction, final GridPoint2 obstacle) {
         if (moveProgress != 1) {
             return;
         }
