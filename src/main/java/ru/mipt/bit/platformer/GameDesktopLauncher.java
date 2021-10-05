@@ -13,9 +13,7 @@ public class GameDesktopLauncher {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         // level width: 10 tiles x 128px, height: 8 tiles x 128px
         config.setWindowedMode(1280, 1024);
-        try (var gameDriver = createGameDriver()) {
-            new Lwjgl3Application(gameDriver, config);
-        }
+        new Lwjgl3Application(createGameDriver(), config);
     }
 
     private static GameDriver createGameDriver() {

@@ -19,7 +19,7 @@ import ru.mipt.bit.platformer.util.TileMovement;
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.getSingleLayer;
 
-public class GameDriver implements ApplicationListener, AutoCloseable {
+public class GameDriver implements ApplicationListener {
     private final GameLogic gameLogic;
     private final DirectionResolver directionResolver;
     @Nullable
@@ -96,11 +96,6 @@ public class GameDriver implements ApplicationListener, AutoCloseable {
 
     @Override
     public void dispose() {
-        close();
-    }
-
-    @Override
-    public void close() {
         if (gameGraphics != null) {
             gameGraphics.close();
         }
