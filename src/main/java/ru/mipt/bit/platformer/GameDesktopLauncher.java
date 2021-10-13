@@ -1,14 +1,10 @@
 package ru.mipt.bit.platformer;
 
-import java.util.List;
-
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import com.badlogic.gdx.math.GridPoint2;
 import ru.mipt.bit.platformer.driver.GameDriver;
+import ru.mipt.bit.platformer.driver.initalizers.RandomGameLogicInitializer;
 import ru.mipt.bit.platformer.logic.GameLogic;
-import ru.mipt.bit.platformer.logic.Player;
-import ru.mipt.bit.platformer.logic.Point2D;
 
 public class GameDesktopLauncher {
 
@@ -20,12 +16,6 @@ public class GameDesktopLauncher {
     }
 
     private static GameDriver createGameDriver() {
-        return new GameDriver(
-                new GameLogic(
-                        new Player(new Point2D(1, 1)),
-                        List.of(new Point2D(1, 3))
-                ),
-                new DefaultGdxDirectionResolver()
-        );
+        return new GameDriver(new DefaultGdxDirectionResolver(), new RandomGameLogicInitializer());
     }
 }

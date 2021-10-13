@@ -1,12 +1,14 @@
 package ru.mipt.bit.platformer.driver;
 
-import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
@@ -22,23 +24,24 @@ import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.getSingleLayer;
 
 public class GameDriver implements ApplicationListener {
-    private final GameLogic gameLogic;
+
     private final DirectionResolver directionResolver;
-    @Nullable
+    private final GameLogicInitializer gameLogicInitializer;
+    private GameLogic gameLogic;
     private GameGraphics gameGraphics;
 
     public GameDriver(
-            final GameLogic gameLogic,
-            final DirectionResolver directionResolver
-    ) {
-        this.gameLogic = gameLogic;
+            final DirectionResolver directionResolver,
+            final GameLogicInitializer gameLogicInitializer) {
         this.directionResolver = directionResolver;
+        this.gameLogicInitializer = gameLogicInitializer;
     }
 
     @Override
     public void create() {
-        final var batch = new SpriteBatch();
         final var level = new TmxMapLoader().load("level.tmx");
+        gameLogic = gameLogicInitializer.init(toMap(level.getProperties()));
+        final var batch = new SpriteBatch();
         final var tileMovement = new TileMovement(getSingleLayer(level), Interpolation.smooth);
         final var playerTexture = new Texture("images/tank_blue.png");
         final var treeTexture = new Texture("images/greenTree.png");
@@ -115,5 +118,14 @@ public class GameDriver implements ApplicationListener {
 
     private static GridPoint2 toGdxGridPoint(final Point2D point2D) {
         return new GridPoint2(point2D.getX(), point2D.getY());
+    }
+
+    private static Map<String, Object> toMap(final MapProperties props) {
+        final Iterable<String> keyIterable = props::getKeys;
+        final var result = new HashMap<String, Object>();
+        for (var key : keyIterable) {
+            result.put(key, props.get(key));
+        }
+        return result;
     }
 }
