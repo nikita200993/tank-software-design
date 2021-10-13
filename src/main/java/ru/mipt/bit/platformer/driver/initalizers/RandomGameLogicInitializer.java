@@ -13,10 +13,16 @@ import ru.mipt.bit.platformer.logic.Point2D;
 
 public class RandomGameLogicInitializer implements GameLogicInitializer {
 
+    private final Random random;
     private final float maxObstaclesShare;
 
     public RandomGameLogicInitializer() {
-        this.maxObstaclesShare = 0.25f;
+        this(new Random(), 0.25f);
+    }
+
+    RandomGameLogicInitializer(final Random random, final float maxObstaclesShare) {
+        this.random = random;
+        this.maxObstaclesShare = maxObstaclesShare;
     }
 
     @Override
@@ -25,7 +31,6 @@ public class RandomGameLogicInitializer implements GameLogicInitializer {
         final int height = (int) levelProps.get("height");
         final int tilesCount = width * height;
         final int maxObstacles = Math.min(tilesCount - 1, (int) Math.floor(tilesCount * maxObstaclesShare));
-        final var random = new Random();
         final Set<Point2D> obstacles = new HashSet<>();
         final int obstacleCount = random.nextInt(maxObstacles) + 1;
         for (int i = 0; i < obstacleCount; i++) {
