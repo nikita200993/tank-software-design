@@ -1,12 +1,5 @@
 package ru.mipt.bit.platformer.logic;
 
-import com.badlogic.gdx.math.GridPoint2;
-
-import static ru.mipt.bit.platformer.util.GdxGameUtils.decrementedX;
-import static ru.mipt.bit.platformer.util.GdxGameUtils.decrementedY;
-import static ru.mipt.bit.platformer.util.GdxGameUtils.incrementedX;
-import static ru.mipt.bit.platformer.util.GdxGameUtils.incrementedY;
-
 public enum Direction {
     UP {
         @Override
@@ -15,8 +8,8 @@ public enum Direction {
         }
 
         @Override
-        GridPoint2 computeNextPosition(final GridPoint2 position) {
-            return incrementedY(position);
+        Point2D computeNextPosition(final Point2D position) {
+            return new Point2D(position.getX(), position.getY() + 1);
         }
     },
     DOWN {
@@ -26,8 +19,8 @@ public enum Direction {
         }
 
         @Override
-        GridPoint2 computeNextPosition(final GridPoint2 position) {
-            return decrementedY(position);
+        Point2D computeNextPosition(final Point2D position) {
+            return new Point2D(position.getX(), position.getY() - 1);
         }
     },
     LEFT {
@@ -37,8 +30,8 @@ public enum Direction {
         }
 
         @Override
-        GridPoint2 computeNextPosition(final GridPoint2 position) {
-            return decrementedX(position);
+        Point2D computeNextPosition(final Point2D position) {
+            return new Point2D(position.getX() - 1, position.getY());
         }
     },
     RIGHT {
@@ -48,12 +41,12 @@ public enum Direction {
         }
 
         @Override
-        GridPoint2 computeNextPosition(final GridPoint2 position) {
-            return incrementedX(position);
+        Point2D computeNextPosition(final Point2D position) {
+            return new Point2D(position.getX() + 1, position.getY());
         }
     };
 
     abstract float getRotation();
 
-    abstract GridPoint2 computeNextPosition(GridPoint2 position);
+    abstract Point2D computeNextPosition(Point2D position);
 }

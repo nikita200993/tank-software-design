@@ -8,12 +8,14 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
 import ru.mipt.bit.platformer.DirectionResolver;
 import ru.mipt.bit.platformer.UserInput;
 import ru.mipt.bit.platformer.graphic.GameGraphics;
 import ru.mipt.bit.platformer.graphic.GraphicsSimpleObject;
 import ru.mipt.bit.platformer.logic.GameLogic;
+import ru.mipt.bit.platformer.logic.Point2D;
 import ru.mipt.bit.platformer.util.TileMovement;
 
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
@@ -41,13 +43,14 @@ public class GameDriver implements ApplicationListener {
         final var playerTexture = new Texture("images/tank_blue.png");
         final var treeTexture = new Texture("images/greenTree.png");
         final var player = gameLogic.getPlayer();
+        final var obstaclePoint2D = gameLogic.getObstacles().get(0);
         gameGraphics = new GameGraphics(
                 batch,
                 level,
                 new GraphicsSimpleObject(
                         tileMovement,
-                        player.getCurrentPosition(),
-                        player.getDestinationPosition(),
+                        toGdxGridPoint(player.getCurrentPosition()),
+                        toGdxGridPoint(player.getDestinationPosition()),
                         playerTexture,
                         new TextureRegion(playerTexture),
                         player.getRotation(),
@@ -55,8 +58,8 @@ public class GameDriver implements ApplicationListener {
                 ),
                 new GraphicsSimpleObject(
                         tileMovement,
-                        gameLogic.getObstacle(),
-                        gameLogic.getObstacle(),
+                        toGdxGridPoint(obstaclePoint2D),
+                        toGdxGridPoint(obstaclePoint2D),
                         treeTexture,
                         new TextureRegion(treeTexture),
                         0,
@@ -79,8 +82,8 @@ public class GameDriver implements ApplicationListener {
         );
         final var player = gameLogic.getPlayer();
         gameGraphics.getPlayerGraphics()
-                .withCurrent(player.getCurrentPosition())
-                .withDestination(player.getDestinationPosition())
+                .withCurrent(toGdxGridPoint(player.getCurrentPosition()))
+                .withDestination(toGdxGridPoint(player.getDestinationPosition()))
                 .withRotation(player.getRotation())
                 .withMoveProgress(player.getMoveProgress());
         gameGraphics.render();
@@ -108,5 +111,9 @@ public class GameDriver implements ApplicationListener {
 
     private float getTimePassedSinceLastRender() {
         return Gdx.graphics.getDeltaTime();
+    }
+
+    private static GridPoint2 toGdxGridPoint(final Point2D point2D) {
+        return new GridPoint2(point2D.getX(), point2D.getY());
     }
 }

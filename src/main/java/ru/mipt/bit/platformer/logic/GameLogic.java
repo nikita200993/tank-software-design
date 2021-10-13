@@ -1,28 +1,29 @@
 package ru.mipt.bit.platformer.logic;
 
-import com.badlogic.gdx.math.GridPoint2;
+import java.util.List;
+
 import ru.mipt.bit.platformer.UserInput;
 
 public class GameLogic {
     private final Player player;
-    private final GridPoint2 obstacle;
+    private final List<Point2D> obstacles;
 
-    public GameLogic(final Player player, final GridPoint2 obstacle) {
+    public GameLogic(final Player player, List<Point2D> obstacles) {
         this.player = player;
-        this.obstacle = obstacle;
+        this.obstacles = obstacles;
     }
 
     public void update(final UserInput userInput, final float time) {
         player.updateProgress(time);
         userInput.getDirection()
-                .ifPresent(direction -> player.startMove(direction, obstacle));
+                .ifPresent(direction -> player.startMove(direction, obstacles));
     }
 
     public Player getPlayer() {
         return player;
     }
 
-    public GridPoint2 getObstacle() {
-        return obstacle;
+    public List<Point2D> getObstacles() {
+        return obstacles;
     }
 }

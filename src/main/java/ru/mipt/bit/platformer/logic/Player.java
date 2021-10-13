@@ -1,6 +1,6 @@
 package ru.mipt.bit.platformer.logic;
 
-import com.badlogic.gdx.math.GridPoint2;
+import java.util.List;
 
 import static ru.mipt.bit.platformer.util.GdxGameUtils.continueProgress;
 
@@ -9,21 +9,21 @@ public class Player {
     private final static float ACCURACY = 0.001f;
     private final static float MOVE_SPEED = 0.4f;
 
-    private final GridPoint2 currentPosition;
-    private final GridPoint2 destinationPosition;
+    private final Point2D currentPosition;
+    private final Point2D destinationPosition;
     private float moveProgress = 1;
     private float rotation;
 
-    public Player(final GridPoint2 currentPosition) {
+    public Player(final Point2D currentPosition) {
         this.currentPosition = currentPosition;
-        this.destinationPosition = currentPosition.cpy();
+        this.destinationPosition = currentPosition.copy();
     }
 
-    public GridPoint2 getCurrentPosition() {
+    public Point2D getCurrentPosition() {
         return currentPosition;
     }
 
-    public GridPoint2 getDestinationPosition() {
+    public Point2D getDestinationPosition() {
         return destinationPosition;
     }
 
@@ -43,13 +43,13 @@ public class Player {
         }
     }
 
-    public void startMove(final Direction direction, final GridPoint2 obstacle) {
+    public void startMove(final Direction direction, List<Point2D> obstacles) {
         if (moveProgress != 1) {
             return;
         }
         this.rotation = direction.getRotation();
-        final GridPoint2 destination = direction.computeNextPosition(currentPosition);
-        if (!obstacle.equals(destination)) {
+        final Point2D destination = direction.computeNextPosition(currentPosition);
+        if (obstacles.stream().noneMatch(destination::equals)) {
             this.moveProgress = 0;
             this.destinationPosition.set(destination);
         }
