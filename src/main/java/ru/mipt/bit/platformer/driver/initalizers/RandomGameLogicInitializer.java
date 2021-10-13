@@ -32,7 +32,7 @@ public class RandomGameLogicInitializer implements GameLogicInitializer {
         final int tilesCount = width * height;
         final int maxObstacles = Math.min(tilesCount - 1, (int) Math.floor(tilesCount * maxObstaclesShare));
         final Set<Point2D> obstacles = new HashSet<>();
-        final int obstacleCount = random.nextInt(maxObstacles) + 1;
+        final int obstacleCount = random.nextInt(maxObstacles + 1);
         for (int i = 0; i < obstacleCount; i++) {
             obstacles.add(generateNextPoint(obstacles, random, tilesCount, width));
         }
