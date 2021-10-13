@@ -1,5 +1,7 @@
 package ru.mipt.bit.platformer.graphic;
 
+import java.util.List;
+
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -10,19 +12,19 @@ public class GameGraphics implements AutoCloseable {
     private final TiledMap tiledMap;
     private final MapRenderer mapRenderer;
     private final GraphicsSimpleObject playerGraphics;
-    private final GraphicsSimpleObject treeGraphics;
+    private final List<GraphicsSimpleObject> obstaclesGraphics;
 
     public GameGraphics(
             final Batch batch,
             final TiledMap tiledMap,
             final GraphicsSimpleObject playerGraphics,
-            final GraphicsSimpleObject treeGraphics
+            final List<GraphicsSimpleObject> obstacleGraphics
     ) {
         this.batch = batch;
         this.tiledMap = tiledMap;
         this.mapRenderer = GdxGameUtils.createSingleLayerMapRenderer(tiledMap, batch);
         this.playerGraphics = playerGraphics;
-        this.treeGraphics = treeGraphics;
+        this.obstaclesGraphics = obstacleGraphics;
     }
 
     public GraphicsSimpleObject getPlayerGraphics() {
@@ -32,7 +34,7 @@ public class GameGraphics implements AutoCloseable {
     public void render() {
         mapRenderer.render();
         batch.begin();
-        treeGraphics.render(batch);
+        obstaclesGraphics.forEach(obstacleGraphics -> obstacleGraphics.render(batch));
         playerGraphics.render(batch);
         batch.end();
     }
@@ -42,6 +44,6 @@ public class GameGraphics implements AutoCloseable {
         batch.dispose();
         tiledMap.dispose();
         playerGraphics.close();
-        treeGraphics.close();
+        obstaclesGraphics.forEach(GraphicsSimpleObject::close);
     }
 }

@@ -2,6 +2,7 @@ package ru.mipt.bit.platformer.driver;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
@@ -46,7 +47,6 @@ public class GameDriver implements ApplicationListener {
         final var playerTexture = new Texture("images/tank_blue.png");
         final var treeTexture = new Texture("images/greenTree.png");
         final var player = gameLogic.getPlayer();
-        final var obstaclePoint2D = gameLogic.getObstacles().get(0);
         gameGraphics = new GameGraphics(
                 batch,
                 level,
@@ -59,15 +59,10 @@ public class GameDriver implements ApplicationListener {
                         player.getRotation(),
                         player.getMoveProgress()
                 ),
-                new GraphicsSimpleObject(
-                        tileMovement,
-                        toGdxGridPoint(obstaclePoint2D),
-                        toGdxGridPoint(obstaclePoint2D),
-                        treeTexture,
-                        new TextureRegion(treeTexture),
-                        0,
-                        1
-                )
+                gameLogic.getObstacles()
+                        .stream()
+                        .map(point -> createStaticGraphicsObject(tileMovement, treeTexture, point))
+                        .collect(Collectors.toList())
         );
     }
 
@@ -127,5 +122,21 @@ public class GameDriver implements ApplicationListener {
             result.put(key, props.get(key));
         }
         return result;
+    }
+
+    private static GraphicsSimpleObject createStaticGraphicsObject(
+            final TileMovement tileMovement,
+            final Texture texture,
+            final Point2D position
+    ) {
+        return new GraphicsSimpleObject(
+                tileMovement,
+                toGdxGridPoint(position),
+                toGdxGridPoint(position),
+                texture,
+                new TextureRegion(texture),
+                0,
+                1
+        );
     }
 }
