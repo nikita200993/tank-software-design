@@ -54,4 +54,8 @@ public class Player {
             this.destinationPosition.set(destination);
         }
     }
+
+    public float getMoveSpeed() {
+        return MOVE_SPEED;
+    }
 }
