@@ -48,7 +48,7 @@ public class RandomGameLogicInitializer implements GameLogicInitializer {
     ) {
         while (true) {
             final int nextInt = random.nextInt(limit);
-            Point2D point = new Point2D(nextInt / width, nextInt % width);
+            final Point2D point = new Point2D(nextInt / width, nextInt % width);
             if (!obstacles.contains(point)) {
                 return point;
             }
