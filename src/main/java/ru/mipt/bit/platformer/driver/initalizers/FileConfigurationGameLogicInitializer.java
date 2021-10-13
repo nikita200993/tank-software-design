@@ -2,9 +2,9 @@ package ru.mipt.bit.platformer.driver.initalizers;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -15,10 +15,10 @@ import ru.mipt.bit.platformer.logic.Point2D;
 
 public class FileConfigurationGameLogicInitializer implements GameLogicInitializer {
 
-    private final Path pathToFile;
+    private final String resource;
 
-    public FileConfigurationGameLogicInitializer(final Path pathToFile) {
-        this.pathToFile = pathToFile;
+    public FileConfigurationGameLogicInitializer(final String resource) {
+        this.resource = resource;
     }
 
     @Override
@@ -28,7 +28,17 @@ public class FileConfigurationGameLogicInitializer implements GameLogicInitializ
             final int height = (int) levelProps.get("height");
             final List<Point2D> obstacles = new ArrayList<>();
             Point2D playerPoint = null;
-            final var lines = Files.readAllLines(pathToFile);
+            final var content = new String(
+                    FileConfigurationGameLogicInitializer.class
+                            .getResourceAsStream(resource)
+                            .readAllBytes()
+            );
+            final List<String> lines;
+            if (content.contains("\r\n")) {
+                lines = Arrays.asList(content.split("\r\n"));
+            } else {
+                lines = Arrays.asList(content.split("\n"));
+            }
             if (lines.size() != height) {
                 throw new IllegalStateException("there are " + lines.size() + " lines in file, but required " + height);
             }
@@ -45,9 +55,9 @@ public class FileConfigurationGameLogicInitializer implements GameLogicInitializ
                         case 'T':
                             obstacles.add(new Point2D(i, j));
                             break;
-                        case 'P': {
+                        case 'X': {
                             if (playerPoint != null) {
-                                throw new IllegalStateException("There must be one player in the game.");
+                                throw new IllegalStateException("there must be one player in the game");
                             }
                             playerPoint = new Point2D(i, j);
                             break;
@@ -56,7 +66,7 @@ public class FileConfigurationGameLogicInitializer implements GameLogicInitializ
                 }
             }
             if (playerPoint == null) {
-                throw new IllegalStateException("file at path '" + pathToFile.toAbsolutePath() + "' doesn't contain player");
+                throw new IllegalStateException("resource at path '" + resource + "' doesn't contain player");
             }
             return new GameLogic(new Player(playerPoint), obstacles);
         } catch (final IOException ex) {
