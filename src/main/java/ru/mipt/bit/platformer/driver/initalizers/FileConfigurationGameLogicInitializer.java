@@ -58,7 +58,7 @@ public class FileConfigurationGameLogicInitializer implements GameLogicInitializ
                             if (playerPoint != null) {
                                 throw new IllegalStateException("there must be one player in the game");
                             }
-                            playerPoint = new Point2D(i, j);
+                            playerPoint = new Point2D(j, i);
                             break;
                         }
                     }
