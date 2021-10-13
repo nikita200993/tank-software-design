@@ -9,5 +9,8 @@ gdx.backend_lwjgl3 = "com.badlogicgames.gdx:gdx-backend-lwjgl3:$versions.gdx"
 gdx.platform_desktop = "com.badlogicgames.gdx:gdx-platform:$versions.gdx:natives-desktop"
 deps.gdx = gdx
 deps.jsr305 = "com.google.code.findbugs:jsr305:3.0.2"
+deps.junitVersion = "5.8.1"
+deps.assertJVersion="3.21.0"
+deps.mockitoVersion="4.0.0"
 
 ext.deps = deps
