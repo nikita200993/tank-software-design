@@ -1,6 +1,8 @@
 package ru.mipt.bit.platformer.driver;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -45,7 +47,6 @@ public class GameDriver implements ApplicationListener {
         final var batch = new SpriteBatch();
         final var tileMovement = new TileMovement(getSingleLayer(level), Interpolation.smooth);
         final var playerTexture = new Texture("images/tank_blue.png");
-        final var treeTexture = new Texture("images/greenTree.png");
         final var player = gameLogic.getPlayer();
         gameGraphics = new GameGraphics(
                 batch,
@@ -59,10 +60,7 @@ public class GameDriver implements ApplicationListener {
                         player.getRotation(),
                         player.getMoveProgress()
                 ),
-                gameLogic.getObstacles()
-                        .stream()
-                        .map(point -> createStaticGraphicsObject(tileMovement, treeTexture, point))
-                        .collect(Collectors.toList())
+                createTrees(gameLogic, tileMovement)
         );
     }
 
@@ -122,6 +120,17 @@ public class GameDriver implements ApplicationListener {
             result.put(key, props.get(key));
         }
         return result;
+    }
+
+    private static List<GraphicsSimpleObject> createTrees(final GameLogic gameLogic, final TileMovement tileMovement) {
+        if (gameLogic.getObstacles().isEmpty()) {
+            return Collections.emptyList();
+        }
+        final var treeTexture = new Texture("images/greenTree.png");
+        return gameLogic.getObstacles()
+                .stream()
+                .map(point -> createStaticGraphicsObject(tileMovement, treeTexture, point))
+                .collect(Collectors.toList());
     }
 
     private static GraphicsSimpleObject createStaticGraphicsObject(
