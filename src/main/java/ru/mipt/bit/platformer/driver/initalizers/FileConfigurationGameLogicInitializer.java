@@ -52,13 +52,13 @@ public class FileConfigurationGameLogicInitializer implements GameLogicInitializ
                     final char aChar = line.charAt(j);
                     switch (aChar) {
                         case 'T':
-                            obstacles.add(new Point2D(j, i));
+                            obstacles.add(new Point2D(j, height - 1 - i));
                             break;
                         case 'X': {
                             if (playerPoint != null) {
                                 throw new IllegalStateException("there must be one player in the game");
                             }
-                            playerPoint = new Point2D(j, i);
+                            playerPoint = new Point2D(j, height - 1 - i);
                             break;
                         }
                     }
