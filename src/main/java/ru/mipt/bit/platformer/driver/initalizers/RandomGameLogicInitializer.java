@@ -16,7 +16,7 @@ public class RandomGameLogicInitializer implements GameLogicInitializer {
     private final float maxObstaclesShare;
 
     public RandomGameLogicInitializer() {
-        this.maxObstaclesShare = 0.5f;
+        this.maxObstaclesShare = 0.25f;
     }
 
     @Override
@@ -44,7 +44,7 @@ public class RandomGameLogicInitializer implements GameLogicInitializer {
         while (true) {
             final int nextInt = random.nextInt(limit);
             Point2D point = new Point2D(nextInt / width, nextInt % width);
-            if (obstacles.add(point)) {
+            if (!obstacles.contains(point)) {
                 return point;
             }
         }
