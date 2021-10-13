@@ -52,7 +52,7 @@ public class FileConfigurationGameLogicInitializer implements GameLogicInitializ
                     final char aChar = line.charAt(j);
                     switch (aChar) {
                         case 'T':
-                            obstacles.add(new Point2D(i, j));
+                            obstacles.add(new Point2D(j, i));
                             break;
                         case 'X': {
                             if (playerPoint != null) {
