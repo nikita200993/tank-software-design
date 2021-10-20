@@ -1,10 +1,9 @@
 package ru.mipt.bit.platformer.driver.initalizers;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 import ru.mipt.bit.platformer.driver.GameLogicInitializer;
 import ru.mipt.bit.platformer.logic.GameLogic;
@@ -31,27 +30,13 @@ public class RandomGameLogicInitializer implements GameLogicInitializer {
         final int height = (int) levelProps.get("height");
         final int tilesCount = width * height;
         final int maxObstacles = Math.min(tilesCount - 1, (int) Math.floor(tilesCount * maxObstaclesShare));
-        final Set<Point2D> obstacles = new HashSet<>();
-        final int obstacleCount = random.nextInt(maxObstacles + 1);
-        for (int i = 0; i < obstacleCount; i++) {
-            obstacles.add(generateNextPoint(obstacles, random, tilesCount, width));
-        }
-        final Point2D playerPosition = generateNextPoint(obstacles, random, tilesCount, width);
-        return new GameLogic(new Player(playerPosition), List.copyOf(obstacles));
-    }
-
-    private static Point2D generateNextPoint(
-            final Set<Point2D> obstacles,
-            final Random random,
-            final int limit,
-            final int width
-    ) {
-        while (true) {
-            final int nextInt = random.nextInt(limit);
-            final Point2D point = new Point2D(nextInt / width, nextInt % width);
-            if (!obstacles.contains(point)) {
-                return point;
-            }
-        }
+        final List<Point2D> points = new RandomPointsGenerator(random, width, height)
+                .generatePoints(1, maxObstacles + 1);
+        return new GameLogic(
+                new Player(points.get(0)),
+                points.stream()
+                        .skip(1)
+                        .collect(Collectors.toList())
+        );
     }
 }
