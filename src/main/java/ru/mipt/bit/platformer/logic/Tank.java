@@ -58,7 +58,7 @@ public class Tank implements Colliding, MoveView {
         if (isMoving()) {
             return;
         }
-        angle = direction.getRotation();
+        angle = direction.getAngle();
         final Point2D destination = direction.computeNextPosition(currentPosition);
         if (obstacles.stream().noneMatch(obstacle -> obstacle.collides(destination))) {
             moveProgress = 0;

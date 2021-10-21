@@ -3,7 +3,7 @@ package ru.mipt.bit.platformer.logic;
 public enum Direction {
     UP {
         @Override
-        float getRotation() {
+        float getAngle() {
             return 90;
         }
 
@@ -14,7 +14,7 @@ public enum Direction {
     },
     DOWN {
         @Override
-        float getRotation() {
+        float getAngle() {
             return -90;
         }
 
@@ -25,7 +25,7 @@ public enum Direction {
     },
     LEFT {
         @Override
-        float getRotation() {
+        float getAngle() {
             return -180;
         }
 
@@ -36,7 +36,7 @@ public enum Direction {
     },
     RIGHT {
         @Override
-        float getRotation() {
+        float getAngle() {
             return 0;
         }
 
@@ -46,7 +46,7 @@ public enum Direction {
         }
     };
 
-    abstract float getRotation();
+    abstract float getAngle();
 
     abstract Point2D computeNextPosition(Point2D position);
 }
