@@ -1,6 +1,5 @@
 package ru.mipt.bit.platformer.driver.initalizers;
 
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Random;
@@ -20,28 +19,13 @@ public class RandomPointsGenerator {
         this.height = height;
     }
 
-    public List<Point2D> generatePoints(final int minPointsNumber, final int maxPointsNumber) {
-        checkNotNegative(maxPointsNumber);
-        checkMinPointsNumberNotGreater(minPointsNumber, maxPointsNumber);
-        final int pointsNumber = Math.max(minPointsNumber, random.nextInt(maxPointsNumber + 1));
+    public List<Point2D> generatePoints(final int numPoints) {
+        checkNotNegative(numPoints);
         final Set<Point2D> points = new LinkedHashSet<>();
-        for (int i = 0; i < pointsNumber; i++) {
+        for (int i = 0; i < numPoints; i++) {
             points.add(generateNextPoint(points));
         }
         return List.copyOf(points);
-    }
-
-    private static void checkMinPointsNumberNotGreater(final int minPointsNumber, final int maxPointsNumber) {
-        if (minPointsNumber > maxPointsNumber) {
-            throw new IllegalArgumentException(
-                    String.format(
-                            "minimum point number must be not greater than max point number,"
-                                    + " but were min = %d, max = %d",
-                            minPointsNumber,
-                            maxPointsNumber
-                    )
-            );
-        }
     }
 
     private static void checkNotNegative(final int maxPointsNumber) {

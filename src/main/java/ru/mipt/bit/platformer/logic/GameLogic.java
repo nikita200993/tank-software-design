@@ -1,29 +1,64 @@
 package ru.mipt.bit.platformer.logic;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import ru.mipt.bit.platformer.UserInput;
+import java.util.Optional;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 public class GameLogic {
-    private final Player player;
-    private final List<Point2D> obstacles;
+    private final Tank player;
+    private final List<Tank> aiTanks;
+    private final List<Colliding> obstacles;
+    private final Random random;
 
-    public GameLogic(final Player player, List<Point2D> obstacles) {
+    public GameLogic(final Tank player, List<Tank> aiTanks, final List<Colliding> obstacles) {
         this.player = player;
+        this.aiTanks = aiTanks;
         this.obstacles = obstacles;
+        this.random = new Random();
+    }
+
+    public static GameLogic create(final Level level) {
+        final var player = new Tank(level.getPlayerCoordinate());
+        final var aiTanks = level.getAiPlayers()
+                .stream()
+                .map(Tank::new)
+                .collect(Collectors.toList());
+        final var obstacles = new ArrayList<Colliding>(aiTanks);
+        obstacles.add(player);
+        level.getTreesCoordinates()
+                .stream()
+                .map(SinglePoint::new)
+                .forEach(obstacles::add);
+        obstacles.add(new RectangleMap(level.getWidth(), level.getHeight()));
+        return new GameLogic(player, aiTanks, obstacles);
+    }
+
+    public List<MoveView> getMoveViews() {
+        final var moveViews = new ArrayList<MoveView>(aiTanks);
+        moveViews.add(player);
+        return moveViews;
     }
 
     public void update(final UserInput userInput, final float time) {
         player.updateProgress(time);
+        aiTanks.forEach(tank -> tank.updateProgress(time));
         userInput.getDirection()
                 .ifPresent(direction -> player.startMove(direction, obstacles));
+        for (final var aiTank : aiTanks) {
+            getRandomDirectionOrNothing()
+                    .ifPresent(direction -> aiTank.startMove(direction, obstacles));
+        }
     }
 
-    public Player getPlayer() {
-        return player;
-    }
-
-    public List<Point2D> getObstacles() {
-        return obstacles;
+    private Optional<Direction> getRandomDirectionOrNothing() {
+        final var directions = Direction.values();
+        final int randomInt = random.nextInt(directions.length + 1);
+        if (randomInt == directions.length) {
+            return Optional.empty();
+        } else {
+            return Optional.of(directions[randomInt]);
+        }
     }
 }

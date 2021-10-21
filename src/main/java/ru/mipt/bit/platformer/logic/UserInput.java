@@ -1,4 +1,4 @@
-package ru.mipt.bit.platformer;
+package ru.mipt.bit.platformer.logic;
 
 import java.util.Optional;
 import javax.annotation.Nullable;

@@ -2,8 +2,10 @@ package ru.mipt.bit.platformer;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import ru.mipt.bit.platformer.device.DefaultGdxDirectionResolver;
 import ru.mipt.bit.platformer.driver.GameDriver;
-import ru.mipt.bit.platformer.driver.initalizers.FileConfigurationGameLogicInitializer;
+import ru.mipt.bit.platformer.driver.initalizers.FileConfigurationGameLevelInitializer;
+import ru.mipt.bit.platformer.driver.initalizers.RandomGameLevelInitializer;
 
 public class GameDesktopLauncher {
 
@@ -15,6 +17,8 @@ public class GameDesktopLauncher {
     }
 
     private static GameDriver createGameDriver() {
-        return new GameDriver(new DefaultGdxDirectionResolver(), new FileConfigurationGameLogicInitializer("classpath:level.config"));
+        return new GameDriver(
+                new DefaultGdxDirectionResolver(),
+                new RandomGameLevelInitializer(2, 2));
     }
 }

@@ -6,26 +6,23 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
-import ru.mipt.bit.platformer.driver.GameLogicInitializer;
-import ru.mipt.bit.platformer.logic.GameLogic;
-import ru.mipt.bit.platformer.logic.Player;
+import ru.mipt.bit.platformer.driver.GameLevelInitializer;
+import ru.mipt.bit.platformer.logic.Level;
 import ru.mipt.bit.platformer.logic.Point2D;
 
-public class FileConfigurationGameLogicInitializer implements GameLogicInitializer {
+public class FileConfigurationGameLevelInitializer implements GameLevelInitializer {
 
     private final String resourceDescriptor;
 
-    public FileConfigurationGameLogicInitializer(final String resourceDescriptor) {
+    public FileConfigurationGameLevelInitializer(final String resourceDescriptor) {
         this.resourceDescriptor = resourceDescriptor;
     }
 
     @Override
-    public GameLogic init(final Map<String, Object> levelProps) {
-        final int width = (int) levelProps.get("width");
-        final int height = (int) levelProps.get("height");
+    public Level init(final int width, final int height) {
         final List<Point2D> obstacles = new ArrayList<>();
         Point2D playerPoint = null;
         final String content = loadContent();
@@ -58,7 +55,7 @@ public class FileConfigurationGameLogicInitializer implements GameLogicInitializ
         if (playerPoint == null) {
             throw new IllegalStateException("resource at path '" + resourceDescriptor + "' doesn't contain player");
         }
-        return new GameLogic(new Player(playerPoint), obstacles);
+        return new Level(playerPoint, Collections.emptyList(), obstacles, width, height);
     }
 
     private void checkContentCorrespondsToHeigth(final int height, final List<String> lines) {
@@ -79,7 +76,7 @@ public class FileConfigurationGameLogicInitializer implements GameLogicInitializ
         try {
             if (resourceDescriptor.startsWith("classpath:")) {
                 return new String(
-                        FileConfigurationGameLogicInitializer.class
+                        FileConfigurationGameLevelInitializer.class
                                 .getResourceAsStream("/" + resourceDescriptor.substring("classpath:".length()))
                                 .readAllBytes()
                 );
