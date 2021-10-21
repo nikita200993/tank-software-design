@@ -10,23 +10,23 @@ public class GameGraphics implements AutoCloseable {
     private final Batch batch;
     private final TiledMap tiledMap;
     private final MapRenderer mapRenderer;
-    private final List<Renderable> obstaclesGraphics;
+    private final List<Renderable> renderables;
 
     public GameGraphics(
             final Batch batch,
             final TiledMap tiledMap,
-            final List<Renderable> obstacleGraphics
+            final List<Renderable> renderables
     ) {
         this.batch = batch;
         this.tiledMap = tiledMap;
         this.mapRenderer = GdxGameUtils.createSingleLayerMapRenderer(tiledMap, batch);
-        this.obstaclesGraphics = obstacleGraphics;
+        this.renderables = renderables;
     }
 
     public void render() {
         mapRenderer.render();
         batch.begin();
-        obstaclesGraphics.forEach(obstacleGraphics -> obstacleGraphics.render(batch));
+        renderables.forEach(renderable -> renderable.render(batch));
         batch.end();
     }
 
