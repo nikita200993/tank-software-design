@@ -1,4 +1,7 @@
-package ru.mipt.bit.platformer.logic;
+package ru.mipt.bit.platformer.driver;
+
+import ru.mipt.bit.platformer.logic.MoveView;
+import ru.mipt.bit.platformer.logic.Point2D;
 
 public class StaticMoveView implements MoveView {
     private final Point2D position;
