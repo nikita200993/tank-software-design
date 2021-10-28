@@ -34,20 +34,35 @@ public class GameState {
                 .stream()
                 .map(Tank::new)
                 .collect(Collectors.toList());
-        final var collidingObjects = new ArrayList<Colliding>(aiTanks);
-        collidingObjects.add(player);
-        level.getTreesCoordinates()
-                .stream()
-                .map(SinglePoint::new)
-                .forEach(collidingObjects::add);
-        collidingObjects.add(new RectangleMap(level.getWidth(), level.getHeight()));
-        return new GameState(
+        return create(
                 player,
                 aiTanks,
                 level.getTreesCoordinates(),
-                collidingObjects,
                 level.getWidth(),
                 level.getHeight()
+        );
+    }
+
+    static GameState create(
+            final Tank player,
+            final List<Tank> aiTanks,
+            final List<Point2D> obstacles,
+            final int width,
+            final int height
+    ) {
+        final var collidingObjects = new ArrayList<Colliding>(aiTanks);
+        collidingObjects.add(player);
+        obstacles.stream()
+                .map(SinglePoint::new)
+                .forEach(collidingObjects::add);
+        collidingObjects.add(new RectangleMap(width, height));
+        return new GameState(
+                player,
+                aiTanks,
+                obstacles,
+                collidingObjects,
+                width,
+                height
         );
     }
 
