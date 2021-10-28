@@ -9,13 +9,13 @@ public class Tank implements Colliding, MoveView {
     private final Point2D currentPosition;
     private final Point2D destinationPosition;
     private float moveProgress;
-    private float angle;
+    private Direction direction;
 
     Tank(final Point2D currentPosition) {
         this.currentPosition = currentPosition;
         this.destinationPosition = currentPosition.copy();
         this.moveProgress = 1;
-        this.angle = 0;
+        this.direction = Direction.RIGHT;
     }
 
     @Override
@@ -39,12 +39,16 @@ public class Tank implements Colliding, MoveView {
 
     @Override
     public float angle() {
-        return angle;
+        return direction.getAngle();
     }
 
     @Override
     public float progress() {
         return moveProgress;
+    }
+
+    public Direction getDirection() {
+        return direction;
     }
 
     void updateProgress(final float time) {
@@ -58,7 +62,7 @@ public class Tank implements Colliding, MoveView {
         if (isMoving()) {
             return;
         }
-        angle = direction.getAngle();
+        this.direction = direction;
         final Point2D destination = direction.computeNextPosition(currentPosition);
         if (obstacles.stream().noneMatch(obstacle -> obstacle.collides(destination))) {
             moveProgress = 0;
