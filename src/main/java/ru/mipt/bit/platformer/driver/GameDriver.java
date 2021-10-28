@@ -16,15 +16,16 @@ import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.utils.Disposable;
+import ru.mipt.bit.platformer.ai.TankGameAI;
 import ru.mipt.bit.platformer.device.DirectionResolver;
 import ru.mipt.bit.platformer.graphic.GameGraphics;
 import ru.mipt.bit.platformer.graphic.GraphicsObject;
 import ru.mipt.bit.platformer.graphic.Renderable;
 import ru.mipt.bit.platformer.graphic.TileMovement;
+import ru.mipt.bit.platformer.logic.Command;
 import ru.mipt.bit.platformer.logic.GameState;
-import ru.mipt.bit.platformer.logic.MoveView;
+import ru.mipt.bit.platformer.logic.MoveCommand;
 import ru.mipt.bit.platformer.logic.Point2D;
-import ru.mipt.bit.platformer.logic.UserInput;
 
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 import static ru.mipt.bit.platformer.graphic.GdxGameUtils.getSingleLayer;
@@ -33,15 +34,19 @@ public class GameDriver implements ApplicationListener {
 
     private final DirectionResolver directionResolver;
     private final GameLevelInitializer gameLevelInitializer;
+    private final TankGameAI ai;
     private GameState gameState;
     private GameGraphics gameGraphics;
     private final List<Disposable> disposables;
 
     public GameDriver(
             final DirectionResolver directionResolver,
-            final GameLevelInitializer gameLevelInitializer) {
+            final GameLevelInitializer gameLevelInitializer,
+            final TankGameAI ai
+    ) {
         this.directionResolver = directionResolver;
         this.gameLevelInitializer = gameLevelInitializer;
+        this.ai = ai;
         this.disposables = new ArrayList<>();
     }
 
@@ -84,10 +89,10 @@ public class GameDriver implements ApplicationListener {
     public void render() {
         float timePassedSinceLastRender = getTimePassedSinceLastRender();
         clearScreen();
-        gameState.update(
-                new UserInput(directionResolver.resolveDirection().orElse(null)),
-                timePassedSinceLastRender
-        );
+        gameState.update(timePassedSinceLastRender);
+        final var commands = new ArrayList<>(getPlayerCommands());
+        commands.addAll(ai.computeAiCommands(gameState));
+        commands.forEach(Command::execute);
         gameGraphics.render();
     }
 
@@ -116,6 +121,19 @@ public class GameDriver implements ApplicationListener {
         return Gdx.graphics.getDeltaTime();
     }
 
+    private List<Command> getPlayerCommands() {
+        return directionResolver.resolveDirection()
+                .map(
+                        direction -> new MoveCommand(
+                                gameState.getPlayer(),
+                                direction,
+                                gameState.getCollidingObjects()
+                        )
+                )
+                .stream()
+                .collect(Collectors.toList());
+    }
+
     private static Map<String, Object> toMap(final MapProperties props) {
         final Iterable<String> keyIterable = props::getKeys;
         final var result = new HashMap<String, Object>();
@@ -136,39 +154,11 @@ public class GameDriver implements ApplicationListener {
         disposables.add(treeTexture);
         return pointTrees
                 .stream()
-                .map(point -> createStaticGraphicsObject(tileMovement, treeTexture, point))
+                .map(point -> GraphicsObject.create(
+                        new StaticMoveView(point, 0),
+                        tileMovement,
+                        new TextureRegion(treeTexture)
+                ))
                 .collect(Collectors.toList());
-    }
-
-    private static GraphicsObject createStaticGraphicsObject(
-            final TileMovement tileMovement,
-            final Texture texture,
-            final Point2D position
-    ) {
-        return GraphicsObject.create(
-                new MoveView() {
-                    @Override
-                    public Point2D currentPosition() {
-                        return position.copy();
-                    }
-
-                    @Override
-                    public Point2D destinationPosition() {
-                        return position.copy();
-                    }
-
-                    @Override
-                    public float angle() {
-                        return 0;
-                    }
-
-                    @Override
-                    public float progress() {
-                        return 1;
-                    }
-                },
-                tileMovement,
-                new TextureRegion(texture)
-        );
     }
 }
