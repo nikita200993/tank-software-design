@@ -25,6 +25,7 @@ test {
 }
 
 dependencies {
+    implementation deps.ai
     implementation deps.jsr305
     implementation deps.gdx.gdx
     implementation deps.gdx.backend_lwjgl3
