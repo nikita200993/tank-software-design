@@ -21,7 +21,7 @@ import ru.mipt.bit.platformer.graphic.GameGraphics;
 import ru.mipt.bit.platformer.graphic.GraphicsObject;
 import ru.mipt.bit.platformer.graphic.Renderable;
 import ru.mipt.bit.platformer.graphic.TileMovement;
-import ru.mipt.bit.platformer.logic.GameLogic;
+import ru.mipt.bit.platformer.logic.GameState;
 import ru.mipt.bit.platformer.logic.MoveView;
 import ru.mipt.bit.platformer.logic.Point2D;
 import ru.mipt.bit.platformer.logic.UserInput;
@@ -33,7 +33,7 @@ public class GameDriver implements ApplicationListener {
 
     private final DirectionResolver directionResolver;
     private final GameLevelInitializer gameLevelInitializer;
-    private GameLogic gameLogic;
+    private GameState gameState;
     private GameGraphics gameGraphics;
     private final List<Disposable> disposables;
 
@@ -53,7 +53,7 @@ public class GameDriver implements ApplicationListener {
                 (int) propMap.get("width"),
                 (int) propMap.get("height")
         );
-        gameLogic = GameLogic.create(level);
+        gameState = GameState.create(level);
         final var batch = new SpriteBatch();
         final var tileMovement = new TileMovement(getSingleLayer(levelMap), Interpolation.smooth);
         gameGraphics = new GameGraphics(
@@ -68,7 +68,7 @@ public class GameDriver implements ApplicationListener {
             final TileMovement tileMovement) {
         final var tankTexture = new Texture("images/tank_blue.png");
         disposables.add(tankTexture);
-        final List<Renderable> renderables = gameLogic.getMoveViews()
+        final List<Renderable> renderables = gameState.getMoveViews()
                 .stream()
                 .map(moveView -> GraphicsObject.create(moveView, tileMovement, new TextureRegion(tankTexture)))
                 .collect(Collectors.toList());
@@ -84,7 +84,7 @@ public class GameDriver implements ApplicationListener {
     public void render() {
         float timePassedSinceLastRender = getTimePassedSinceLastRender();
         clearScreen();
-        gameLogic.update(
+        gameState.update(
                 new UserInput(directionResolver.resolveDirection().orElse(null)),
                 timePassedSinceLastRender
         );

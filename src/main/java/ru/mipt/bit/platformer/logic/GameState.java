@@ -6,20 +6,20 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-public class GameLogic {
+public class GameState {
     private final Tank player;
     private final List<Tank> aiTanks;
     private final List<Colliding> obstacles;
     private final Random random;
 
-    public GameLogic(final Tank player, List<Tank> aiTanks, final List<Colliding> obstacles) {
+    public GameState(final Tank player, List<Tank> aiTanks, final List<Colliding> obstacles) {
         this.player = player;
         this.aiTanks = aiTanks;
         this.obstacles = obstacles;
         this.random = new Random();
     }
 
-    public static GameLogic create(final Level level) {
+    public static GameState create(final Level level) {
         final var player = new Tank(level.getPlayerCoordinate());
         final var aiTanks = level.getAiPlayers()
                 .stream()
@@ -32,7 +32,7 @@ public class GameLogic {
                 .map(SinglePoint::new)
                 .forEach(obstacles::add);
         obstacles.add(new RectangleMap(level.getWidth(), level.getHeight()));
-        return new GameLogic(player, aiTanks, obstacles);
+        return new GameState(player, aiTanks, obstacles);
     }
 
     public List<MoveView> getMoveViews() {
