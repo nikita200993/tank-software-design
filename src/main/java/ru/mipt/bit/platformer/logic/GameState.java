@@ -2,21 +2,30 @@ package ru.mipt.bit.platformer.logic;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 public class GameState {
     private final Tank player;
     private final List<Tank> aiTanks;
-    private final List<Colliding> obstacles;
-    private final Random random;
+    private final List<Point2D> obstacles;
+    private final List<Colliding> collidingObjects;
+    private final int width;
+    private final int height;
 
-    public GameState(final Tank player, List<Tank> aiTanks, final List<Colliding> obstacles) {
+    private GameState(
+            final Tank player,
+            final List<Tank> aiTanks,
+            final List<Point2D> obstacles,
+            final List<Colliding> collidingObjects,
+            final int width,
+            final int height
+    ) {
         this.player = player;
         this.aiTanks = aiTanks;
         this.obstacles = obstacles;
-        this.random = new Random();
+        this.collidingObjects = collidingObjects;
+        this.width = width;
+        this.height = height;
     }
 
     public static GameState create(final Level level) {
@@ -25,14 +34,21 @@ public class GameState {
                 .stream()
                 .map(Tank::new)
                 .collect(Collectors.toList());
-        final var obstacles = new ArrayList<Colliding>(aiTanks);
-        obstacles.add(player);
+        final var collidingObjects = new ArrayList<Colliding>(aiTanks);
+        collidingObjects.add(player);
         level.getTreesCoordinates()
                 .stream()
                 .map(SinglePoint::new)
-                .forEach(obstacles::add);
-        obstacles.add(new RectangleMap(level.getWidth(), level.getHeight()));
-        return new GameState(player, aiTanks, obstacles);
+                .forEach(collidingObjects::add);
+        collidingObjects.add(new RectangleMap(level.getWidth(), level.getHeight()));
+        return new GameState(
+                player,
+                aiTanks,
+                level.getTreesCoordinates(),
+                collidingObjects,
+                level.getWidth(),
+                level.getHeight()
+        );
     }
 
     public List<MoveView> getMoveViews() {
@@ -41,24 +57,33 @@ public class GameState {
         return moveViews;
     }
 
-    public void update(final UserInput userInput, final float time) {
-        player.updateProgress(time);
-        aiTanks.forEach(tank -> tank.updateProgress(time));
-        userInput.getDirection()
-                .ifPresent(direction -> player.startMove(direction, obstacles));
-        for (final var aiTank : aiTanks) {
-            getRandomDirectionOrNothing()
-                    .ifPresent(direction -> aiTank.startMove(direction, obstacles));
-        }
+    public Tank getPlayer() {
+        return player;
     }
 
-    private Optional<Direction> getRandomDirectionOrNothing() {
-        final var directions = Direction.values();
-        final int randomInt = random.nextInt(directions.length + 1);
-        if (randomInt == directions.length) {
-            return Optional.empty();
-        } else {
-            return Optional.of(directions[randomInt]);
-        }
+    public List<Tank> getAiTanks() {
+        return aiTanks;
+    }
+
+    public List<Point2D> getObstacles() {
+        return obstacles;
+    }
+
+    public List<Colliding> getCollidingObjects() {
+        return collidingObjects;
+    }
+
+
+    public void update(final float deltaTime) {
+        player.updateProgress(deltaTime);
+        aiTanks.forEach(it -> it.updateProgress(deltaTime));
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 }
