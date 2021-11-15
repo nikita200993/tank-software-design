@@ -1,25 +1,21 @@
 package ru.mipt.bit.platformer.driver;
 
-import ru.mipt.bit.platformer.logic.MoveView;
-import ru.mipt.bit.platformer.logic.Point2D;
+import ru.mipt.bit.platformer.logic.FloatPoint2D;
+import ru.mipt.bit.platformer.logic.GameObjectView;
 
-public class StaticMoveView implements MoveView {
-    private final Point2D position;
+public class StaticMoveView implements GameObjectView {
+    private final FloatPoint2D position;
     private final float angle;
 
-    public StaticMoveView(final Point2D position, final float angle) {
+    public StaticMoveView(final FloatPoint2D position, final float angle) {
         this.position = position;
         this.angle = angle;
     }
 
-    @Override
-    public Point2D currentPosition() {
-        return position.copy();
-    }
 
     @Override
-    public Point2D destinationPosition() {
-        return position.copy();
+    public FloatPoint2D position() {
+        return position;
     }
 
     @Override
@@ -27,8 +23,4 @@ public class StaticMoveView implements MoveView {
         return angle;
     }
 
-    @Override
-    public float progress() {
-        return 1;
-    }
 }

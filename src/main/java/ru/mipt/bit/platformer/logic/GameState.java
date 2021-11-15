@@ -1,6 +1,7 @@
 package ru.mipt.bit.platformer.logic;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,6 +12,7 @@ public class GameState {
     private final List<Colliding> collidingObjects;
     private final int width;
     private final int height;
+    private final List<GameLogicListener> listeners;
 
     private GameState(
             final Tank player,
@@ -26,6 +28,7 @@ public class GameState {
         this.collidingObjects = collidingObjects;
         this.width = width;
         this.height = height;
+        this.listeners = new ArrayList<>();
     }
 
     public static GameState create(final Level level) {
@@ -66,10 +69,21 @@ public class GameState {
         );
     }
 
-    public List<MoveView> getMoveViews() {
-        final var moveViews = new ArrayList<MoveView>(aiTanks);
-        moveViews.add(player);
-        return moveViews;
+    public void update(final float deltaTime) {
+        player.updateProgress(deltaTime);
+        aiTanks.forEach(it -> it.updateProgress(deltaTime));
+    }
+
+    public void addListener(final GameLogicListener listener) {
+        listeners.add(listener);
+        final var tanks = new ArrayList<>(aiTanks);
+        tanks.add(player);
+        listener.onRegister(
+                Collections.unmodifiableList(tanks),
+                obstacles.stream()
+                        .map(it -> new StaticGameObjectView(new FloatPoint2D(it.getX(), it.getY())))
+                        .collect(Collectors.toList())
+        );
     }
 
     public Tank getPlayer() {
@@ -88,12 +102,6 @@ public class GameState {
         return collidingObjects;
     }
 
-
-    public void update(final float deltaTime) {
-        player.updateProgress(deltaTime);
-        aiTanks.forEach(it -> it.updateProgress(deltaTime));
-    }
-
     public int getWidth() {
         return width;
     }
@@ -101,4 +109,5 @@ public class GameState {
     public int getHeight() {
         return height;
     }
+
 }

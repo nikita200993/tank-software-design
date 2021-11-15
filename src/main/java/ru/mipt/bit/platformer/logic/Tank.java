@@ -2,7 +2,7 @@ package ru.mipt.bit.platformer.logic;
 
 import java.util.List;
 
-public class Tank implements Colliding, MoveView {
+public class Tank implements Colliding, GameObjectView {
 
     private final static float MOVE_SPEED = 2.5f;
 
@@ -28,13 +28,11 @@ public class Tank implements Colliding, MoveView {
     }
 
     @Override
-    public Point2D currentPosition() {
-        return currentPosition.copy();
-    }
-
-    @Override
-    public Point2D destinationPosition() {
-        return destinationPosition.copy();
+    public FloatPoint2D position() {
+        return new FloatPoint2D(
+                currentPosition.getX() + (destinationPosition.getX() - currentPosition.getX()) * moveProgress,
+                currentPosition.getY() + (destinationPosition.getY() - currentPosition.getY()) * moveProgress
+        );
     }
 
     @Override
@@ -42,9 +40,12 @@ public class Tank implements Colliding, MoveView {
         return direction.getAngle();
     }
 
-    @Override
-    public float progress() {
-        return moveProgress;
+    public Point2D currentPosition() {
+        return currentPosition.copy();
+    }
+
+    public Point2D destinationPosition() {
+        return destinationPosition.copy();
     }
 
     public Direction getDirection() {
