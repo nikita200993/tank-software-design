@@ -15,14 +15,13 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.utils.Disposable;
 import ru.mipt.bit.platformer.ai.TankGameAI;
 import ru.mipt.bit.platformer.device.DirectionResolver;
-import ru.mipt.bit.platformer.newgraphics.GdxGameUtils;
-import ru.mipt.bit.platformer.newgraphics.RectangleMovement;
 import ru.mipt.bit.platformer.logic.Command;
 import ru.mipt.bit.platformer.logic.GameState;
 import ru.mipt.bit.platformer.logic.MoveCommand;
 import ru.mipt.bit.platformer.newgraphics.GameGraphics;
+import ru.mipt.bit.platformer.newgraphics.GdxGameUtils;
+import ru.mipt.bit.platformer.newgraphics.RectangleMovement;
 
-import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 import static ru.mipt.bit.platformer.newgraphics.GdxGameUtils.getSingleLayer;
 
 public class GameDriver implements ApplicationListener {
@@ -61,13 +60,8 @@ public class GameDriver implements ApplicationListener {
 
 
     @Override
-    public void resize(final int width, final int height) {
-    }
-
-    @Override
     public void render() {
         float timePassedSinceLastRender = getTimePassedSinceLastRender();
-        clearScreen();
         gameState.update(timePassedSinceLastRender);
         final var commands = new ArrayList<>(getPlayerCommands());
         commands.addAll(ai.computeAiCommands(gameState));
@@ -76,16 +70,20 @@ public class GameDriver implements ApplicationListener {
     }
 
     @Override
+    public void dispose() {
+        disposables.forEach(Disposable::dispose);
+    }
+
+    @Override
+    public void resize(final int width, final int height) {
+    }
+
+    @Override
     public void pause() {
     }
 
     @Override
     public void resume() {
-    }
-
-    @Override
-    public void dispose() {
-        disposables.forEach(Disposable::dispose);
     }
 
     private GameGraphics createGraphics(final TiledMap levelMap) {
@@ -103,11 +101,6 @@ public class GameDriver implements ApplicationListener {
                 GdxGameUtils.createSingleLayerMapRenderer(levelMap, batch),
                 new RectangleMovement(layer.getTileWidth(), layer.getTileHeight())
         );
-    }
-
-    private void clearScreen() {
-        Gdx.gl.glClearColor(0f, 0f, 0.2f, 1f);
-        Gdx.gl.glClear(GL_COLOR_BUFFER_BIT);
     }
 
     private float getTimePassedSinceLastRender() {

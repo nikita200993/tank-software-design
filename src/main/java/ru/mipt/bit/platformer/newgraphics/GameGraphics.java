@@ -4,11 +4,14 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapRenderer;
 import ru.mipt.bit.platformer.logic.GameLogicListener;
 import ru.mipt.bit.platformer.logic.GameObjectView;
+
+import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 
 public class GameGraphics implements GameLogicListener {
 
@@ -36,6 +39,7 @@ public class GameGraphics implements GameLogicListener {
 
 
     public void render() {
+        clearScreen();
         mapRenderer.render();
         batch.begin();
         gameObjectToRenderable.values().forEach(it -> it.render(batch));
@@ -61,5 +65,10 @@ public class GameGraphics implements GameLogicListener {
                 rectangleMovement,
                 gameObjectView
         );
+    }
+
+    private void clearScreen() {
+        Gdx.gl.glClearColor(0f, 0f, 0.2f, 1f);
+        Gdx.gl.glClear(GL_COLOR_BUFFER_BIT);
     }
 }
