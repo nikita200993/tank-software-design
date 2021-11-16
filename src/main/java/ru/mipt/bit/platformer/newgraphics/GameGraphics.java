@@ -46,7 +46,7 @@ public class GameGraphics implements GameLogicListener {
         batch.end();
     }
 
-    public void onRegister(final List<GameObjectView> tanks, final List<GameObjectView> trees) {
+    public void onRegister(final List<? extends GameObjectView> tanks, final List<? extends GameObjectView> trees) {
         tanks.forEach(it -> gameObjectToRenderable.put(it, createTank(it)));
         trees.forEach(it -> gameObjectToRenderable.put(it, createTree(it)));
     }
