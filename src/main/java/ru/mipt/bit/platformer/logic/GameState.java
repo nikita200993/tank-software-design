@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 public class GameState {
     private final Tank player;
     private final List<Tank> aiTanks;
-    private final List<Point2D> obstacles;
+    private final List<Obstacle> obstacles;
     private final List<Colliding> collidingObjects;
     private final int width;
     private final int height;
@@ -17,7 +17,7 @@ public class GameState {
     private GameState(
             final Tank player,
             final List<Tank> aiTanks,
-            final List<Point2D> obstacles,
+            final List<Obstacle> obstacles,
             final List<Colliding> collidingObjects,
             final int width,
             final int height
@@ -49,15 +49,16 @@ public class GameState {
     static GameState create(
             final Tank player,
             final List<Tank> aiTanks,
-            final List<Point2D> obstacles,
+            final List<Point2D> obstaclePoints,
             final int width,
             final int height
     ) {
+        final var obstacles = obstaclePoints.stream()
+                .map(Obstacle::new)
+                .collect(Collectors.toList());
         final var collidingObjects = new ArrayList<Colliding>(aiTanks);
         collidingObjects.add(player);
-        obstacles.stream()
-                .map(SinglePoint::new)
-                .forEach(collidingObjects::add);
+        collidingObjects.addAll(obstacles);
         collidingObjects.add(new RectangleMap(width, height));
         return new GameState(
                 player,
@@ -76,13 +77,11 @@ public class GameState {
 
     public void addListener(final GameLogicListener listener) {
         listeners.add(listener);
-        final var tanks = new ArrayList<>(aiTanks);
+        final var tanks = new ArrayList<GameObjectView>(aiTanks);
         tanks.add(player);
         listener.onRegister(
-                Collections.unmodifiableList(tanks),
-                obstacles.stream()
-                        .map(it -> new StaticGameObjectView(new FloatPoint2D(it.getX(), it.getY())))
-                        .collect(Collectors.toList())
+                tanks,
+                Collections.unmodifiableList(obstacles)
         );
     }
 
@@ -94,7 +93,7 @@ public class GameState {
         return aiTanks;
     }
 
-    public List<Point2D> getObstacles() {
+    public List<Obstacle> getObstacles() {
         return obstacles;
     }
 

@@ -46,6 +46,7 @@ public class TankGameAIAdapter implements TankGameAI {
                 .player(toPlayer(gameState.getPlayer()))
                 .obstacles(
                         gameState.getObstacles().stream()
+                                .map(ru.mipt.bit.platformer.logic.Obstacle::getPosition)
                                 .map(point -> new Obstacle(point.getX(), point.getY()))
                                 .collect(Collectors.toList())
                 )
