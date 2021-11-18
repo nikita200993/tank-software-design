@@ -27,7 +27,7 @@ public class Tank implements Colliding, GameObject {
     }
 
     Tank(final Point2D currentPosition) {
-        this(currentPosition, new Canon(0.5f, 20, 5.0f));
+        this(currentPosition, new Canon(0.5f, 20, 4.0f));
     }
 
     @Override

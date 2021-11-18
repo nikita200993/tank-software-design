@@ -92,11 +92,14 @@ public class GameDriver implements ApplicationListener {
         final TiledMapTileLayer layer = getSingleLayer(levelMap);
         final var tankTexture = new Texture("images/tank_blue.png");
         final var treeTexture = new Texture("images/greenTree.png");
+        final var bulletTexture = new Texture("images/bullet.png");
         disposables.add(tankTexture);
         disposables.add(treeTexture);
+        disposables.add(bulletTexture);
         return new GameGraphics(
                 new TextureRegion(tankTexture),
                 new TextureRegion(treeTexture),
+                new TextureRegion(bulletTexture),
                 new SpriteBatch(),
                 GdxGameUtils.createSingleLayerMapRenderer(levelMap, batch),
                 new RectangleMovement(layer.getTileWidth(), layer.getTileHeight())

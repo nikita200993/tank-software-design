@@ -18,6 +18,7 @@ public class GameGraphics implements GameLogicListener {
 
     private final TextureRegion tank;
     private final TextureRegion tree;
+    private final TextureRegion bullet;
     private final Batch batch;
     private final MapRenderer mapRenderer;
     private final RectangleMovement rectangleMovement;
@@ -27,12 +28,14 @@ public class GameGraphics implements GameLogicListener {
     public GameGraphics(
             final TextureRegion tank,
             final TextureRegion tree,
+            final TextureRegion bullet,
             final Batch batch,
             final MapRenderer mapRenderer,
             final RectangleMovement rectangleMovement
     ) {
         this.tank = tank;
         this.tree = tree;
+        this.bullet = bullet;
         this.batch = batch;
         this.mapRenderer = mapRenderer;
         this.rectangleMovement = rectangleMovement;
@@ -59,6 +62,7 @@ public class GameGraphics implements GameLogicListener {
     ) {
         tanks.forEach(it -> gameObjectToRenderable.put(it, createTank(it)));
         trees.forEach(it -> gameObjectToRenderable.put(it, createTree(it)));
+        bullets.forEach(it -> gameObjectToRenderable.put(it, createBullet(it)));
     }
 
     @Override
@@ -69,6 +73,11 @@ public class GameGraphics implements GameLogicListener {
     @Override
     public void onBulletsDeath(final List<? extends GameObjectView> bullets) {
         dead.addAll(bullets);
+    }
+
+    @Override
+    public void onBulletCreated(final GameObjectView bullet) {
+        gameObjectToRenderable.put(bullet, createBullet(bullet));
     }
 
     private void removeDead() {
@@ -88,6 +97,14 @@ public class GameGraphics implements GameLogicListener {
     private GraphicObject createTree(final GameObjectView gameObjectView) {
         return new GraphicObject(
                 tree,
+                rectangleMovement,
+                gameObjectView
+        );
+    }
+
+    private GraphicObject createBullet(final GameObjectView gameObjectView) {
+        return new GraphicObject(
+                bullet,
                 rectangleMovement,
                 gameObjectView
         );
