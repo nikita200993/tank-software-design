@@ -11,6 +11,9 @@ import ru.mipt.bit.platformer.logic.shoot.Bullet;
 
 public class DeathService {
 
+    private static final float HIT_RADIUS_TANK = 0.4f;
+    private static final float HIT_RADIUS_TREE = 0.6f;
+
     public List<Death> computeDeathsFromHits(final GameState gameState, final float timeTick) {
         final var hits = collectHits(gameState, timeTick);
         return computeDeathsFromHits(hits);
@@ -86,13 +89,14 @@ public class DeathService {
         final FloatPoint2D bulletSpeed = FloatPoint2D.from(bullet.getDirection().unitVector())
                 .multiply(bullet.getSpeed());
         final float moveTime = Math.min(endOfMoveTime(tank), timeTick);
-        return collisionTimeWithUnitCircle(bulletCenter, bulletSpeed, tankCenter, tankSpeed, moveTime)
+        return collisionTimeWithCircle(bulletCenter, bulletSpeed, tankCenter, tankSpeed, HIT_RADIUS_TANK, moveTime)
                 .or(
-                        () -> collisionTimeWithUnitCircle(
+                        () -> collisionTimeWithCircle(
                                 bulletCenter.plus(bulletSpeed.multiply(moveTime)),
                                 bulletSpeed,
                                 tankCenter.plus(tankSpeed.multiply(moveTime)),
                                 new FloatPoint2D(0, 0),
+                                HIT_RADIUS_TANK,
                                 Math.max(0.0f, timeTick - moveTime)
                         )
                 );
@@ -108,7 +112,14 @@ public class DeathService {
         final FloatPoint2D bulletCenter = bullet.position().plus(0.5f);
         final FloatPoint2D bulletSpeed = FloatPoint2D.from(bullet.getDirection().unitVector())
                 .multiply(bullet.getSpeed());
-        return collisionTimeWithUnitCircle(bulletCenter, bulletSpeed, obstacleCenter, obstacleSpeed, timeTick);
+        return collisionTimeWithCircle(
+                bulletCenter,
+                bulletSpeed,
+                obstacleCenter,
+                obstacleSpeed,
+                HIT_RADIUS_TREE,
+                timeTick
+        );
     }
 
     private static Optional<Float> collisionTime(
@@ -148,11 +159,12 @@ public class DeathService {
         return tank.getMoveProgress() / tank.getMoveSpeed();
     }
 
-    private static Optional<Float> collisionTimeWithUnitCircle(
+    private static Optional<Float> collisionTimeWithCircle(
             final FloatPoint2D point,
             final FloatPoint2D pointSpeed,
             final FloatPoint2D circleCenter,
             final FloatPoint2D circleSpeed,
+            final float hitRadius,
             final float timeLimit
     ) {
         final float deltaX = circleCenter.getX() - point.getX();
@@ -161,7 +173,7 @@ public class DeathService {
         final float deltaYSpeed = circleSpeed.getY() - pointSpeed.getY();
         final float a = (float) (Math.pow(deltaXSpeed, 2.0) + Math.pow(deltaYSpeed, 2.0));
         final float b = 2 * (deltaXSpeed * deltaX + deltaYSpeed * deltaY);
-        final float c = (float) (Math.pow(deltaX, 2.0) + Math.pow(deltaY, 2.0)) - 1.0f;
+        final float c = (float) (Math.pow(deltaX, 2.0) + Math.pow(deltaY, 2.0)) - (float) Math.pow(hitRadius, 2);
         return solveQuadraticEquation(a, b, c).flatMap(it -> chooseMinimalLimitedByTimeSolution(it, timeLimit));
     }
 
