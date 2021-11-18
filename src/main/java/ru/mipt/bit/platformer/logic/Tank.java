@@ -60,7 +60,7 @@ public class Tank implements Colliding, GameObject {
         return canon.shoot(
                 direction,
                 position().plus(
-                        FloatPoint2D.from(direction.unitVector())
+                        FloatPoint2D.from(direction.unitVector()).multiply(0.5f)
                 )
         );
     }
