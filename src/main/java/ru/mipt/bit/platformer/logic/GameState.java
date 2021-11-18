@@ -5,29 +5,22 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import ru.mipt.bit.platformer.logic.shoot.Bullet;
+
 public class GameState {
-    private final Tank player;
-    private final List<Tank> aiTanks;
-    private final List<Obstacle> obstacles;
-    private final List<Colliding> collidingObjects;
-    private final int width;
-    private final int height;
+    private final GameObjects gameObjects;
+    private final RectangleMap rectangleMap;
+    private final DeathService deathService;
     private final List<GameLogicListener> listeners;
 
     private GameState(
-            final Tank player,
-            final List<Tank> aiTanks,
-            final List<Obstacle> obstacles,
-            final List<Colliding> collidingObjects,
+            final GameObjects gameObjects,
             final int width,
             final int height
     ) {
-        this.player = player;
-        this.aiTanks = aiTanks;
-        this.obstacles = obstacles;
-        this.collidingObjects = collidingObjects;
-        this.width = width;
-        this.height = height;
+        this.gameObjects = gameObjects;
+        this.rectangleMap = new RectangleMap(width, height);
+        this.deathService = new DeathService();
         this.listeners = new ArrayList<>();
     }
 
@@ -46,6 +39,66 @@ public class GameState {
         );
     }
 
+    public boolean isPlayerAlive() {
+        return getPlayer().isAlive();
+    }
+
+    public void update(final float timeTick) {
+        processDeathsOnThisStep(timeTick);
+        updateSurvived(timeTick);
+    }
+
+    public void addListener(final GameLogicListener listener) {
+        listeners.add(listener);
+        final var tanks = new ArrayList<GameObjectView>(gameObjects.getAiTanks());
+        if (getPlayer().isAlive()) {
+            tanks.add(getPlayer());
+        }
+        listener.onRegister(
+                tanks,
+                Collections.unmodifiableList(gameObjects.getObstacles()),
+                Collections.unmodifiableList(gameObjects.getBullets())
+        );
+    }
+
+    public Tank getPlayer() {
+        return gameObjects.getPlayer();
+    }
+
+    public List<Tank> getAiTanks() {
+        return gameObjects.getAiTanks();
+    }
+
+    public List<Obstacle> getObstacles() {
+        return gameObjects.getObstacles();
+    }
+
+    public List<Bullet> getBullets() {
+        return gameObjects.getBullets();
+    }
+
+    public List<Colliding> getCollidingObjects() {
+        final var collidingObjects = new ArrayList<Colliding>(gameObjects.getAiTanks());
+        if (getPlayer().isAlive()) {
+            collidingObjects.add(gameObjects.getPlayer());
+        }
+        collidingObjects.addAll(gameObjects.getObstacles());
+        collidingObjects.add(rectangleMap);
+        return collidingObjects;
+    }
+
+    public int getWidth() {
+        return rectangleMap.getWidth();
+    }
+
+    public int getHeight() {
+        return rectangleMap.getHeight();
+    }
+
+    public RectangleMap getRectangleMap() {
+        return rectangleMap;
+    }
+
     static GameState create(
             final Tank player,
             final List<Tank> aiTanks,
@@ -56,57 +109,65 @@ public class GameState {
         final var obstacles = obstaclePoints.stream()
                 .map(Obstacle::new)
                 .collect(Collectors.toList());
-        final var collidingObjects = new ArrayList<Colliding>(aiTanks);
-        collidingObjects.add(player);
-        collidingObjects.addAll(obstacles);
-        collidingObjects.add(new RectangleMap(width, height));
         return new GameState(
-                player,
-                aiTanks,
-                obstacles,
-                collidingObjects,
+                new GameObjects(player,
+                        aiTanks,
+                        obstacles,
+                        new ArrayList<>()
+                ),
                 width,
                 height
         );
     }
 
-    public void update(final float deltaTime) {
-        player.updateProgress(deltaTime);
-        aiTanks.forEach(it -> it.updateProgress(deltaTime));
+    void addBullet(final Bullet bullet) {
+        if (rectangleMap.collides(bullet.position())) {
+            return;
+        }
+        this.gameObjects.addBullet(bullet);
+        notifyOnBulletCreated(bullet);
     }
 
-    public void addListener(final GameLogicListener listener) {
-        listeners.add(listener);
-        final var tanks = new ArrayList<GameObjectView>(aiTanks);
-        tanks.add(player);
-        listener.onRegister(
-                tanks,
-                Collections.unmodifiableList(obstacles)
-        );
+    private void notifyOnBulletCreated(final Bullet bullet) {
+        listeners.forEach(it -> it.onBulletCreated(bullet));
     }
 
-    public Tank getPlayer() {
-        return player;
+    private void updateSurvived(final float deltaTime) {
+        if (getPlayer().isAlive()) {
+            getPlayer().update(deltaTime);
+        }
+        getAiTanks().forEach(it -> it.update(deltaTime));
+        getBullets().forEach(it -> it.update(deltaTime));
     }
 
-    public List<Tank> getAiTanks() {
-        return aiTanks;
+    private void processDeathsOnThisStep(final float timeTick) {
+        final var deaths = deathService.computeDeathsFromHits(this, timeTick);
+        final var deadTanks = new ArrayList<Tank>();
+        final var deadBullets = new ArrayList<Bullet>();
+        for (final var death : deaths) {
+            processBulletDeath(death.getBullet(), death.getDeathTime(), deadBullets);
+            death.getTank()
+                    .ifPresent(it -> processTankDeath(it, death.getDeathTime(), deadTanks));
+        }
+        notifyOnDeath(deadTanks, deadBullets);
     }
 
-    public List<Obstacle> getObstacles() {
-        return obstacles;
+    private void processTankDeath(final Tank tank, final float deathTime, final List<Tank> deadTanks) {
+        gameObjects.removeDeadObject(tank);
+        tank.update(deathTime);
+        deadTanks.add(tank);
     }
 
-    public List<Colliding> getCollidingObjects() {
-        return collidingObjects;
+    private void processBulletDeath(final Bullet bullet, final float deathTime, final List<Bullet> bullets) {
+        gameObjects.removeDeadObject(bullet);
+        bullet.update(deathTime);
+        bullets.add(bullet);
     }
 
-    public int getWidth() {
-        return width;
+    private void notifyOnDeath(final List<Tank> deadTanks, final List<Bullet> deadBullets) {
+        for (final var listener : listeners) {
+            listener.onBulletsDeath(deadBullets);
+            listener.onTanksDeath(deadTanks);
+        }
     }
-
-    public int getHeight() {
-        return height;
-    }
-
 }

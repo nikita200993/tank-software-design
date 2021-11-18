@@ -2,7 +2,6 @@ package ru.mipt.bit.platformer.driver;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
@@ -14,10 +13,11 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.utils.Disposable;
 import ru.mipt.bit.platformer.ai.TankGameAI;
-import ru.mipt.bit.platformer.device.DirectionResolver;
+import ru.mipt.bit.platformer.device.PlayerDevice;
 import ru.mipt.bit.platformer.logic.Command;
 import ru.mipt.bit.platformer.logic.GameState;
 import ru.mipt.bit.platformer.logic.MoveCommand;
+import ru.mipt.bit.platformer.logic.ShootCommand;
 import ru.mipt.bit.platformer.newgraphics.GameGraphics;
 import ru.mipt.bit.platformer.newgraphics.GdxGameUtils;
 import ru.mipt.bit.platformer.newgraphics.RectangleMovement;
@@ -26,7 +26,7 @@ import static ru.mipt.bit.platformer.newgraphics.GdxGameUtils.getSingleLayer;
 
 public class GameDriver implements ApplicationListener {
 
-    private final DirectionResolver directionResolver;
+    private final PlayerDevice playerDevice;
     private final GameLevelInitializer gameLevelInitializer;
     private final TankGameAI ai;
     private GameState gameState;
@@ -34,11 +34,11 @@ public class GameDriver implements ApplicationListener {
     private final List<Disposable> disposables;
 
     public GameDriver(
-            final DirectionResolver directionResolver,
+            final PlayerDevice playerDevice,
             final GameLevelInitializer gameLevelInitializer,
             final TankGameAI ai
     ) {
-        this.directionResolver = directionResolver;
+        this.playerDevice = playerDevice;
         this.gameLevelInitializer = gameLevelInitializer;
         this.ai = ai;
         this.disposables = new ArrayList<>();
@@ -108,15 +108,19 @@ public class GameDriver implements ApplicationListener {
     }
 
     private List<Command> getPlayerCommands() {
-        return directionResolver.resolveDirection()
+        final var commands = new ArrayList<Command>();
+        playerDevice.getMoveDirection()
                 .map(
                         direction -> new MoveCommand(
                                 gameState.getPlayer(),
                                 direction,
                                 gameState.getCollidingObjects()
                         )
-                )
-                .stream()
-                .collect(Collectors.toList());
+                ).ifPresent(commands::add);
+        if (playerDevice.isShootRequested()) {
+            System.out.println("shoot requested");
+            commands.add(new ShootCommand(gameState.getPlayer(), gameState));
+        }
+        return commands;
     }
 }

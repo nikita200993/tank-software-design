@@ -15,6 +15,7 @@ import ru.mipt.bit.platformer.logic.Command;
 import ru.mipt.bit.platformer.logic.Direction;
 import ru.mipt.bit.platformer.logic.GameState;
 import ru.mipt.bit.platformer.logic.MoveCommand;
+import ru.mipt.bit.platformer.logic.ShootCommand;
 import ru.mipt.bit.platformer.logic.Tank;
 
 public class TankGameAIAdapter implements TankGameAI {
@@ -30,7 +31,7 @@ public class TankGameAIAdapter implements TankGameAI {
         return ai.recommend(toLibraryGameState(gameState))
                 .stream()
                 .filter(recommendation -> recommendation.getActor().getSource() != gameState.getPlayer())
-                .map(recommendation -> toCommand(recommendation, gameState.getCollidingObjects()))
+                .map(recommendation -> toCommand(recommendation, gameState))
                 .collect(Collectors.toList());
     }
 
@@ -75,10 +76,13 @@ public class TankGameAIAdapter implements TankGameAI {
                 .build();
     }
 
-    private static Command toCommand(final Recommendation recommendation, final List<Colliding> collidingObjects) {
+    private static Command toCommand(final Recommendation recommendation, final GameState gameState) {
         final var tank = (Tank) recommendation.getActor().getSource();
         final var action = recommendation.getAction();
-        final var moveCommandFactory = moveCommandFactory(tank, collidingObjects);
+        final var moveCommandFactory = moveCommandFactory(
+                tank,
+                gameState.getCollidingObjects()
+        );
         switch (action) {
             case MoveNorth:
                 return moveCommandFactory.apply(Direction.UP);
@@ -88,6 +92,8 @@ public class TankGameAIAdapter implements TankGameAI {
                 return moveCommandFactory.apply(Direction.DOWN);
             case MoveWest:
                 return moveCommandFactory.apply(Direction.LEFT);
+            case Shoot:
+                return new ShootCommand(tank, gameState);
             default:
                 throw new IllegalStateException("Unexpected value: " + action);
         }

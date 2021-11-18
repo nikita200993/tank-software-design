@@ -1,5 +1,6 @@
 package ru.mipt.bit.platformer.newgraphics;
 
+import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,7 @@ public class GameGraphics implements GameLogicListener {
     private final MapRenderer mapRenderer;
     private final RectangleMovement rectangleMovement;
     private final Map<Object, Renderable> gameObjectToRenderable;
+    private final List<GameObjectView> dead;
 
     public GameGraphics(
             final TextureRegion tank,
@@ -35,6 +37,7 @@ public class GameGraphics implements GameLogicListener {
         this.mapRenderer = mapRenderer;
         this.rectangleMovement = rectangleMovement;
         this.gameObjectToRenderable = new IdentityHashMap<>();
+        this.dead = new ArrayList<>();
     }
 
 
@@ -44,11 +47,34 @@ public class GameGraphics implements GameLogicListener {
         batch.begin();
         gameObjectToRenderable.values().forEach(it -> it.render(batch));
         batch.end();
+        removeDead();
+        dead.clear();
     }
 
-    public void onRegister(final List<? extends GameObjectView> tanks, final List<? extends GameObjectView> trees) {
+    @Override
+    public void onRegister(
+            final List<? extends GameObjectView> tanks,
+            final List<? extends GameObjectView> trees,
+            final List<? extends GameObjectView> bullets
+    ) {
         tanks.forEach(it -> gameObjectToRenderable.put(it, createTank(it)));
         trees.forEach(it -> gameObjectToRenderable.put(it, createTree(it)));
+    }
+
+    @Override
+    public void onTanksDeath(final List<? extends GameObjectView> tank) {
+        dead.addAll(tank);
+    }
+
+    @Override
+    public void onBulletsDeath(final List<? extends GameObjectView> bullets) {
+        dead.addAll(bullets);
+    }
+
+    private void removeDead() {
+        for (final var view : dead) {
+            gameObjectToRenderable.remove(view);
+        }
     }
 
     private GraphicObject createTank(final GameObjectView gameObjectView) {

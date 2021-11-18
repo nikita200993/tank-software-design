@@ -16,4 +16,19 @@ class RectangleMap implements Colliding {
                 || point2D.getY() < 0
                 || point2D.getY() >= height;
     }
+
+    public boolean collides(final FloatPoint2D floatPoint2D) {
+        return floatPoint2D.getX() < 0.0f
+                || floatPoint2D.getX() > width - 1.0f
+                || floatPoint2D.getY() < 0.0f
+                || floatPoint2D.getY() > height - 1.0f;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public int getWidth() {
+        return width;
+    }
 }

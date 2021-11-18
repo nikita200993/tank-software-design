@@ -3,8 +3,13 @@ package ru.mipt.bit.platformer.logic;
 public enum Direction {
     UP {
         @Override
-        float getAngle() {
+        public float getAngle() {
             return 90;
+        }
+
+        @Override
+        public Point2D unitVector() {
+            return up;
         }
 
         @Override
@@ -14,8 +19,13 @@ public enum Direction {
     },
     DOWN {
         @Override
-        float getAngle() {
+        public float getAngle() {
             return -90;
+        }
+
+        @Override
+        public Point2D unitVector() {
+            return down;
         }
 
         @Override
@@ -25,8 +35,13 @@ public enum Direction {
     },
     LEFT {
         @Override
-        float getAngle() {
+        public float getAngle() {
             return -180;
+        }
+
+        @Override
+        public Point2D unitVector() {
+            return left;
         }
 
         @Override
@@ -36,8 +51,13 @@ public enum Direction {
     },
     RIGHT {
         @Override
-        float getAngle() {
+        public float getAngle() {
             return 0;
+        }
+
+        @Override
+        public Point2D unitVector() {
+            return right;
         }
 
         @Override
@@ -46,7 +66,14 @@ public enum Direction {
         }
     };
 
-    abstract float getAngle();
+    private static final Point2D up = new Point2D(0, 1);
+    private static final Point2D down = new Point2D(0, -1);
+    private static final Point2D left = new Point2D(-1, 0);
+    private static final Point2D right = new Point2D(1, 0);
+
+    public abstract float getAngle();
+
+    public abstract Point2D unitVector();
 
     abstract Point2D computeNextPosition(Point2D position);
 }

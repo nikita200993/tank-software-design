@@ -28,7 +28,7 @@ class TankTest {
     @Test
     void testNoMoveIfCollidesWithObstacle() {
         final var player = new Tank(new Point2D(1, 1));
-        player.startMove(Direction.UP, List.of(new SinglePoint(new Point2D(1, 2))));
+        player.startMove(Direction.UP, List.of(new Obstacle(new Point2D(1, 2))));
         assertThat(player.currentPosition())
                 .isEqualTo(player.destinationPosition());
     }
@@ -38,7 +38,7 @@ class TankTest {
         final var player = new Tank(new Point2D(1, 1));
         player.startMove(Direction.UP, Collections.emptyList());
         final Point2D destination = player.destinationPosition();
-        player.updateProgress(player.getMoveSpeed() * 0.1f);
+        player.update(player.getMoveSpeed() * 0.1f);
         player.startMove(Direction.UP, Collections.emptyList());
         assertThat(player.destinationPosition())
                 .isEqualTo(destination);
@@ -48,7 +48,7 @@ class TankTest {
     void testDestinationEqualsCurrentIfProgressFinished() {
         final var player = new Tank(new Point2D(1, 1));
         player.startMove(Direction.UP, Collections.emptyList());
-        player.updateProgress(player.getMoveSpeed() * 2);
+        player.update(player.getMoveSpeed() * 2);
         assertThat(player.destinationPosition())
                 .isEqualTo(player.currentPosition());
     }
