@@ -1,4 +1,4 @@
-package ru.mipt.bit.platformer.newgraphics;
+package ru.mipt.bit.platformer.graphics;
 
 import com.badlogic.gdx.math.Rectangle;
 import ru.mipt.bit.platformer.logic.FloatPoint2D;

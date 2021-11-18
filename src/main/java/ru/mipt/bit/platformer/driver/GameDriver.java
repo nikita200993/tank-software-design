@@ -18,11 +18,11 @@ import ru.mipt.bit.platformer.logic.Command;
 import ru.mipt.bit.platformer.logic.GameState;
 import ru.mipt.bit.platformer.logic.MoveCommand;
 import ru.mipt.bit.platformer.logic.ShootCommand;
-import ru.mipt.bit.platformer.newgraphics.GameGraphics;
-import ru.mipt.bit.platformer.newgraphics.GdxGameUtils;
-import ru.mipt.bit.platformer.newgraphics.RectangleMovement;
+import ru.mipt.bit.platformer.graphics.GameGraphics;
+import ru.mipt.bit.platformer.graphics.GdxGameUtils;
+import ru.mipt.bit.platformer.graphics.RectangleMovement;
 
-import static ru.mipt.bit.platformer.newgraphics.GdxGameUtils.getSingleLayer;
+import static ru.mipt.bit.platformer.graphics.GdxGameUtils.getSingleLayer;
 
 public class GameDriver implements ApplicationListener {
 

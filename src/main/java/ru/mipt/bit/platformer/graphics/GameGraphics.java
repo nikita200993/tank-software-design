@@ -1,4 +1,4 @@
-package ru.mipt.bit.platformer.newgraphics;
+package ru.mipt.bit.platformer.graphics;
 
 import java.util.ArrayList;
 import java.util.IdentityHashMap;

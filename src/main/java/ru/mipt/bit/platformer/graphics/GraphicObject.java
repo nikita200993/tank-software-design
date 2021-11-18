@@ -1,11 +1,11 @@
-package ru.mipt.bit.platformer.newgraphics;
+package ru.mipt.bit.platformer.graphics;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import ru.mipt.bit.platformer.logic.GameObjectView;
 
-import static ru.mipt.bit.platformer.newgraphics.GdxGameUtils.drawTextureRegionUnscaled;
+import static ru.mipt.bit.platformer.graphics.GdxGameUtils.drawTextureRegionUnscaled;
 
 public class GraphicObject implements Renderable {
 
