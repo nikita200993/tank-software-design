@@ -121,7 +121,6 @@ public class GameDriver implements ApplicationListener {
                         )
                 ).ifPresent(commands::add);
         if (playerDevice.isShootRequested()) {
-            System.out.println("shoot requested");
             commands.add(new ShootCommand(gameState.getPlayer(), gameState));
         }
         return commands;

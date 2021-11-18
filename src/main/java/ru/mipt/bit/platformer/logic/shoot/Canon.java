@@ -20,7 +20,6 @@ public class Canon {
 
     public Optional<Bullet> shoot(final Direction direction, final FloatPoint2D position) {
         if (this.reloadFinishTime <= 0) {
-            System.out.println("shooting");
             reloadFinishTime = reloadTime;
             return Optional.of(new Bullet(bulletSpeed, damage, direction, position));
         } else {

@@ -117,10 +117,10 @@ public class DeathService {
             final float timeTick
     ) {
         final float collisionTime;
-        final float yBullet = bullet.position().getY();
-        final float xBullet = bullet.position().getX();
-        final float yMax = rectangleMap.getHeight() - 1;
-        final float xMax = rectangleMap.getWidth() - 1;
+        final float yBullet = bullet.position().getY() + 0.5f;
+        final float xBullet = bullet.position().getX() + 0.5f;
+        final float yMax = rectangleMap.getHeight();
+        final float xMax = rectangleMap.getWidth();
         switch (bullet.getDirection()) {
             case UP:
                 collisionTime = (yMax - yBullet) / bullet.getSpeed();
