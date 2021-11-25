@@ -12,6 +12,6 @@ public class ShootCommand implements Command {
 
     @Override
     public void execute() {
-        tank.shoot().ifPresent(gameState::addBullet);
+        gameState.shoot(tank);
     }
 }

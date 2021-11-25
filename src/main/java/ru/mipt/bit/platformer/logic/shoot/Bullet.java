@@ -2,9 +2,9 @@ package ru.mipt.bit.platformer.logic.shoot;
 
 import ru.mipt.bit.platformer.logic.Direction;
 import ru.mipt.bit.platformer.logic.FloatPoint2D;
-import ru.mipt.bit.platformer.logic.GameObject;
+import ru.mipt.bit.platformer.logic.GameObjectView;
 
-public class Bullet implements GameObject {
+public class Bullet implements GameObjectView {
     private final float speed;
     private final int damage;
     private final Direction direction;

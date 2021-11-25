@@ -6,115 +6,112 @@ import java.util.Optional;
 import ru.mipt.bit.platformer.logic.shoot.Bullet;
 import ru.mipt.bit.platformer.logic.shoot.Canon;
 
-public class Tank implements Colliding, GameObject {
-
-    private final static float MOVE_SPEED = 2.5f;
-
-    private final Point2D currentPosition;
-    private final Point2D destinationPosition;
-    private float moveProgress;
-    private Direction direction;
-    private int health;
+public class Tank implements Colliding, GameObjectView {
+    private final TankMove tankMove;
     private final Canon canon;
+    private final int maxHealth;
+    private int health;
+    private TankState tankState;
 
-    Tank(final Point2D currentPosition, final Canon canon) {
-        this.currentPosition = currentPosition;
-        this.destinationPosition = currentPosition.copy();
-        this.moveProgress = 1;
-        this.direction = Direction.RIGHT;
-        this.health = 100;
+    Tank(Point2D currentPosition, Canon canon) {
+        this.tankMove = new TankMove(currentPosition);
         this.canon = canon;
+        maxHealth = 100;
+        health = maxHealth;
+        tankState = new FreshState(this);
     }
 
-    Tank(final Point2D currentPosition) {
+    Tank(Point2D currentPosition) {
         this(currentPosition, new Canon(0.5f, 20, 4.0f));
     }
 
     @Override
-    public void update(final float time) {
-        canon.update(time);
-        moveProgress = Math.min(moveProgress + time * getMoveSpeed(), 1);
-        if (finishedMove()) {
-            currentPosition.set(destinationPosition);
-        }
-    }
-
-    @Override
-    public boolean collides(final Point2D point2D) {
-        if (isMoving()) {
-            return point2D.equals(currentPosition) || point2D.equals(destinationPosition);
-        } else {
-            return point2D.equals(currentPosition);
-        }
+    public boolean collides(Point2D point2D) {
+        return point2D.equals(tankMove.getCurrentPosition())
+                || point2D.equals(tankMove.getDestinationPosition());
     }
 
     @Override
     public FloatPoint2D position() {
+        var currentPosition = tankMove.getCurrentPosition();
+        var destinationPosition = tankMove.getDestinationPosition();
+        float moveProgress = tankMove.getMoveProgress();
         return new FloatPoint2D(
                 currentPosition.getX() + (destinationPosition.getX() - currentPosition.getX()) * moveProgress,
                 currentPosition.getY() + (destinationPosition.getY() - currentPosition.getY()) * moveProgress
         );
     }
 
-    public Optional<Bullet> shoot() {
-        return canon.shoot(
-                direction,
-                position().plus(
-                        FloatPoint2D.from(direction.unitVector()).multiply(0.5f)
-                )
-        );
-    }
-
-    public float getMoveProgress() {
-        return moveProgress;
-    }
-
     @Override
     public float angle() {
-        return direction.getAngle();
+        return tankMove.getDirection().getAngle();
     }
 
-    public Point2D currentPosition() {
-        return currentPosition.copy();
-    }
-
-    public Point2D destinationPosition() {
-        return destinationPosition.copy();
-    }
-
-    public Direction getDirection() {
-        return direction;
-    }
-
-    public void reduceHealth(final int damage) {
-        this.health -= damage;
+    public void update(float time) {
+        tankState.update(time);
     }
 
     public boolean isAlive() {
         return this.health > 0;
     }
 
-    public float getMoveSpeed() {
-        return MOVE_SPEED;
+    public Optional<Bullet> shoot() {
+        return tankState.shoot();
     }
 
-    public boolean isMoving() {
-        return moveProgress != 1;
+    public Point2D currentPosition() {
+        return tankMove.getCurrentPosition().copy();
     }
 
-    void startMove(final Direction direction, List<Colliding> obstacles) {
-        if (isMoving()) {
-            return;
-        }
-        this.direction = direction;
-        final Point2D destination = direction.computeNextPosition(currentPosition);
-        if (obstacles.stream().noneMatch(obstacle -> obstacle.collides(destination))) {
-            moveProgress = 0;
-            destinationPosition.set(destination);
-        }
+    public void reduceHealth(int damage) {
+        tankState.reduceHealth(damage);
     }
 
-    private boolean finishedMove() {
-        return moveProgress == 1;
+    public Point2D destinationPosition() {
+        return tankMove.getDestinationPosition().copy();
+    }
+
+    public Direction getDirection() {
+        return tankMove.getDirection();
+    }
+
+    float getMoveSpeed() {
+        return tankState.moveSpeed();
+    }
+
+    float getNominalSpeed() {
+        return 2.5f;
+    }
+
+    float getMoveProgress() {
+        return tankMove.getMoveProgress();
+    }
+
+    void startMove(Direction direction, List<Colliding> collidings) {
+        tankState.startMove(direction, collidings);
+    }
+
+    void setHealth(int health) {
+        this.health = health;
+    }
+
+    void setTankState(TankState tankState) {
+        this.tankState = tankState;
+    }
+
+    Canon getCanon() {
+        return canon;
+    }
+
+    public TankMove getTankMove() {
+        return tankMove;
+    }
+
+    int getHealth() {
+        return health;
+    }
+
+    int getHealthPercent() {
+        return Math.round(Math.max(0, health / (float) maxHealth) * 100);
     }
 }

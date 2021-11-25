@@ -39,6 +39,10 @@ public class GameState {
         );
     }
 
+    public void shoot(Tank tank) {
+        tank.shoot().ifPresent(this::addBullet);
+    }
+
     public boolean isPlayerAlive() {
         return getPlayer().isAlive();
     }
