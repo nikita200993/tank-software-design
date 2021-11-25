@@ -1,6 +1,7 @@
 package ru.mipt.bit.platformer.driver;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.badlogic.gdx.ApplicationListener;
@@ -14,13 +15,14 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.utils.Disposable;
 import ru.mipt.bit.platformer.ai.TankGameAI;
 import ru.mipt.bit.platformer.device.PlayerDevice;
+import ru.mipt.bit.platformer.graphics.GameGraphics;
+import ru.mipt.bit.platformer.graphics.GdxGameUtils;
+import ru.mipt.bit.platformer.graphics.RectangleMovement;
+import ru.mipt.bit.platformer.graphics.ToggleHealthBarCommand;
 import ru.mipt.bit.platformer.logic.Command;
 import ru.mipt.bit.platformer.logic.GameState;
 import ru.mipt.bit.platformer.logic.MoveCommand;
 import ru.mipt.bit.platformer.logic.ShootCommand;
-import ru.mipt.bit.platformer.graphics.GameGraphics;
-import ru.mipt.bit.platformer.graphics.GdxGameUtils;
-import ru.mipt.bit.platformer.graphics.RectangleMovement;
 
 import static ru.mipt.bit.platformer.graphics.GdxGameUtils.getSingleLayer;
 
@@ -111,6 +113,9 @@ public class GameDriver implements ApplicationListener {
     }
 
     private List<Command> getPlayerCommands() {
+        if (!gameState.isPlayerAlive()) {
+            return Collections.emptyList();
+        }
         final var commands = new ArrayList<Command>();
         playerDevice.getMoveDirection()
                 .map(
@@ -122,6 +127,9 @@ public class GameDriver implements ApplicationListener {
                 ).ifPresent(commands::add);
         if (playerDevice.isShootRequested()) {
             commands.add(new ShootCommand(gameState.getPlayer(), gameState));
+        }
+        if (playerDevice.isHealthBarToggle()) {
+            commands.add(new ToggleHealthBarCommand(gameGraphics));
         }
         return commands;
     }

@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapRenderer;
 import ru.mipt.bit.platformer.logic.GameLogicListener;
 import ru.mipt.bit.platformer.logic.GameObjectView;
+import ru.mipt.bit.platformer.logic.HealthAware;
 
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 
@@ -78,6 +79,20 @@ public class GameGraphics implements GameLogicListener {
     @Override
     public void onBulletCreated(final GameObjectView bullet) {
         gameObjectToRenderable.put(bullet, createBullet(bullet));
+    }
+
+    void toggleHealth() {
+        System.out.println("toggle called");
+        var copy = Map.copyOf(gameObjectToRenderable);
+        for (var objectRenderableEntry : copy.entrySet()) {
+            var gameObject = objectRenderableEntry.getKey();
+            var renderable = objectRenderableEntry.getValue();
+            if (renderable instanceof HeathAwareRenderer) {
+                gameObjectToRenderable.put(gameObject, ((HeathAwareRenderer) renderable).unwrap());
+            } else if (gameObject instanceof HealthAware) {
+                gameObjectToRenderable.put(gameObject, new HeathAwareRenderer((HealthAware) gameObject, renderable));
+            }
+        }
     }
 
     private void removeDead() {

@@ -34,4 +34,8 @@ public class GraphicObject implements Renderable {
         rectangleMovement.moveRectangle(rectangle, view.position());
         drawTextureRegionUnscaled(batch, textureRegion, rectangle, view.angle());
     }
+
+    public GameObjectView getView() {
+        return view;
+    }
 }

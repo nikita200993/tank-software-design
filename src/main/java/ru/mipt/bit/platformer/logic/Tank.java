@@ -6,7 +6,7 @@ import java.util.Optional;
 import ru.mipt.bit.platformer.logic.shoot.Bullet;
 import ru.mipt.bit.platformer.logic.shoot.Canon;
 
-public class Tank implements Colliding, GameObjectView {
+public class Tank implements Colliding, GameObjectView, HealthAware {
     private final TankMove tankMove;
     private final Canon canon;
     private final int maxHealth;
@@ -75,6 +75,10 @@ public class Tank implements Colliding, GameObjectView {
         return tankMove.getDirection();
     }
 
+    public int getHealthPercent() {
+        return Math.round(Math.max(0, health / (float) maxHealth) * 100);
+    }
+
     float getMoveSpeed() {
         return tankState.moveSpeed();
     }
@@ -103,15 +107,11 @@ public class Tank implements Colliding, GameObjectView {
         return canon;
     }
 
-    public TankMove getTankMove() {
+    TankMove getTankMove() {
         return tankMove;
     }
 
     int getHealth() {
         return health;
-    }
-
-    int getHealthPercent() {
-        return Math.round(Math.max(0, health / (float) maxHealth) * 100);
     }
 }

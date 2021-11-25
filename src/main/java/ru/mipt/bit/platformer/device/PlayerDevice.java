@@ -25,4 +25,8 @@ public class PlayerDevice {
     public boolean isShootRequested() {
         return Gdx.input.isKeyPressed(Input.Keys.SPACE);
     }
+
+    public boolean isHealthBarToggle() {
+        return Gdx.input.isKeyPressed(Input.Keys.L);
+    }
 }
