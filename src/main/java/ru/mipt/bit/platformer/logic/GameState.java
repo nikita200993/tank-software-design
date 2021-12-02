@@ -7,6 +7,9 @@ import java.util.stream.Collectors;
 
 import ru.mipt.bit.platformer.logic.shoot.Bullet;
 
+/**
+ * Domain entity.
+ */
 public class GameState {
     private final GameObjects gameObjects;
     private final RectangleMap rectangleMap;

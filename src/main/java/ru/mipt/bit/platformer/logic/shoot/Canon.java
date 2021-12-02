@@ -5,6 +5,9 @@ import java.util.Optional;
 import ru.mipt.bit.platformer.logic.Direction;
 import ru.mipt.bit.platformer.logic.FloatPoint2D;
 
+/**
+ * Domain entity.
+ */
 public class Canon {
     private final float reloadTime;
     private final int damage;

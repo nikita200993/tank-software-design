@@ -7,6 +7,9 @@ import com.badlogic.gdx.Input;
 import ru.mipt.bit.platformer.driver.PlayerDevice;
 import ru.mipt.bit.platformer.logic.Direction;
 
+/**
+ * Input adapter.
+ */
 public class PlayerDeviceImpl implements PlayerDevice {
 
     @Override

@@ -1,5 +1,8 @@
 package ru.mipt.bit.platformer.logic;
 
+/**
+ * Domain entity.
+ */
 public class FloatPoint2D {
     private final float x;
     private final float y;

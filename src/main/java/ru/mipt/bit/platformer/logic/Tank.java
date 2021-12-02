@@ -79,6 +79,10 @@ public class Tank implements Colliding, GameObjectView, HealthAware {
         return Math.round(Math.max(0, health / (float) maxHealth) * 100);
     }
 
+    public void startMove(Direction direction, List<Colliding> collidings) {
+        tankState.startMove(direction, collidings);
+    }
+
     float getMoveSpeed() {
         return tankState.moveSpeed();
     }
@@ -89,10 +93,6 @@ public class Tank implements Colliding, GameObjectView, HealthAware {
 
     float getMoveProgress() {
         return tankMove.getMoveProgress();
-    }
-
-    void startMove(Direction direction, List<Colliding> collidings) {
-        tankState.startMove(direction, collidings);
     }
 
     void setHealth(int health) {

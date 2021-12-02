@@ -2,6 +2,9 @@ package ru.mipt.bit.platformer.logic;
 
 import java.util.List;
 
+/**
+ * Domain entity.
+ */
 class TankMove {
     private final Point2D currentPosition;
     private final Point2D destinationPosition;

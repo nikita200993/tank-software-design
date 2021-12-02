@@ -2,6 +2,9 @@ package ru.mipt.bit.platformer.logic;
 
 import java.util.List;
 
+/**
+ * Domain entity.
+ */
 public class Level {
     private final Point2D playerCoordinate;
     private final List<Point2D> aiPlayers;

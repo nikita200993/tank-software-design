@@ -1,5 +1,8 @@
 package ru.mipt.bit.platformer.logic;
 
+/**
+ * Domain entity.
+ */
 class RectangleMap implements Colliding {
     private final int width;
     private final int height;

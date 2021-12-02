@@ -1,5 +1,8 @@
 package ru.mipt.bit.platformer.gdx.graphics;
 
+/**
+ * Domain entity.
+ */
 public class UISettings {
 
     private boolean toggleHealth;

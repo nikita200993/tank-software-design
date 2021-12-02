@@ -2,6 +2,9 @@ package ru.mipt.bit.platformer.logic;
 
 import java.util.List;
 
+/**
+ * Output port.
+ */
 public interface GameLogicListener {
     default void onRegister(
             List<? extends Tank> tanks,

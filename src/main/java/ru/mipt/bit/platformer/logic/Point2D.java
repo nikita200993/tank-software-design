@@ -2,6 +2,9 @@ package ru.mipt.bit.platformer.logic;
 
 import java.util.Objects;
 
+/**
+ * Domain entity.
+ */
 public final class Point2D {
     private int x;
     private int y;

@@ -22,11 +22,12 @@ import ru.mipt.bit.platformer.gdx.graphics.ToggleHealthBarCommand;
 import ru.mipt.bit.platformer.gdx.graphics.UISettings;
 import ru.mipt.bit.platformer.logic.Command;
 import ru.mipt.bit.platformer.logic.GameState;
-import ru.mipt.bit.platformer.logic.MoveCommand;
-import ru.mipt.bit.platformer.logic.ShootCommand;
 
 import static ru.mipt.bit.platformer.gdx.graphics.GdxGameUtils.getSingleLayer;
 
+/**
+ * Input adapter. (framework callbacks delegated to app layer).
+ */
 public class GameDriver implements ApplicationListener {
 
     private final PlayerDevice playerDevice;

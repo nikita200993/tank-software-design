@@ -1,5 +1,8 @@
 package ru.mipt.bit.platformer.logic;
 
+/**
+ * Domain entity.
+ */
 public class Obstacle implements GameObjectView, Colliding {
     private final Point2D position;
 

@@ -14,10 +14,13 @@ import ru.mipt.bit.platformer.logic.Colliding;
 import ru.mipt.bit.platformer.logic.Command;
 import ru.mipt.bit.platformer.logic.Direction;
 import ru.mipt.bit.platformer.logic.GameState;
-import ru.mipt.bit.platformer.logic.MoveCommand;
-import ru.mipt.bit.platformer.logic.ShootCommand;
+import ru.mipt.bit.platformer.driver.MoveCommand;
+import ru.mipt.bit.platformer.driver.ShootCommand;
 import ru.mipt.bit.platformer.logic.Tank;
 
+/**
+ * Output adapter.
+ */
 public class TankGameAIAdapter implements TankGameAI {
 
     private final AI ai;

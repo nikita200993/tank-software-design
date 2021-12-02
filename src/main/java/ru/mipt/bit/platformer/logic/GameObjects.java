@@ -5,6 +5,9 @@ import java.util.List;
 
 import ru.mipt.bit.platformer.logic.shoot.Bullet;
 
+/**
+ * Domain entity.
+ */
 public class GameObjects {
     private final Tank player;
     private final List<Tank> aiTanks;

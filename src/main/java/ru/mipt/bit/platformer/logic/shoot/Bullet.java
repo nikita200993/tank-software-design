@@ -4,6 +4,9 @@ import ru.mipt.bit.platformer.logic.Direction;
 import ru.mipt.bit.platformer.logic.FloatPoint2D;
 import ru.mipt.bit.platformer.logic.GameObjectView;
 
+/**
+ * Domain entity.
+ */
 public class Bullet implements GameObjectView {
     private final float speed;
     private final int damage;

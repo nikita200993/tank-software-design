@@ -16,6 +16,9 @@ import ru.mipt.bit.platformer.logic.Tank;
 
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 
+/**
+ * Output adapter.
+ */
 public class GameGraphics implements GameLogicListener {
 
     private final TextureRegion tankTexture;

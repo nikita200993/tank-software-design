@@ -6,6 +6,9 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 
+/**
+ * Adapter.
+ */
 public class HealthRenderer implements Renderable {
     private final UISettings uiSettings;
     private final ShapeRenderer shapeRenderer;

@@ -1,5 +1,12 @@
-package ru.mipt.bit.platformer.logic;
+package ru.mipt.bit.platformer.driver;
 
+import ru.mipt.bit.platformer.logic.Command;
+import ru.mipt.bit.platformer.logic.GameState;
+import ru.mipt.bit.platformer.logic.Tank;
+
+/**
+ * Use case.
+ */
 public class ShootCommand implements Command {
 
     private final Tank tank;

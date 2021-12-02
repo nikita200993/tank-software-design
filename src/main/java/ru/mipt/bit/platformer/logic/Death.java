@@ -5,6 +5,9 @@ import javax.annotation.Nullable;
 
 import ru.mipt.bit.platformer.logic.shoot.Bullet;
 
+/**
+ * Domain entity.
+ */
 public class Death {
     private final Bullet bullet;
     @Nullable

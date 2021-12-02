@@ -13,6 +13,9 @@ import ru.mipt.bit.platformer.driver.GameLevelInitializer;
 import ru.mipt.bit.platformer.logic.Level;
 import ru.mipt.bit.platformer.logic.Point2D;
 
+/**
+ * Input adapter.
+ */
 public class FileConfigurationGameLevelInitializer implements GameLevelInitializer {
 
     private final String resourceDescriptor;

@@ -5,6 +5,9 @@ import java.util.Optional;
 
 import ru.mipt.bit.platformer.logic.shoot.Bullet;
 
+/**
+ * Domain entity.
+ */
 public class HeavyDamagedState implements TankState {
 
     private final Tank tank;

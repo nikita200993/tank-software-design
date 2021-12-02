@@ -5,6 +5,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import ru.mipt.bit.platformer.logic.GameObjectView;
 
+/**
+ * Adapter
+ */
 public class GraphicObject implements Renderable {
 
     private final Batch batch;

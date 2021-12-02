@@ -9,6 +9,9 @@ import javax.annotation.Nullable;
 
 import ru.mipt.bit.platformer.logic.shoot.Bullet;
 
+/**
+ * Infra
+ */
 public class DeathService {
 
     private static final float HIT_RADIUS_TANK = 0.4f;
