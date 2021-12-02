@@ -15,18 +15,17 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.utils.Disposable;
 import ru.mipt.bit.platformer.ai.TankGameAI;
-import ru.mipt.bit.platformer.device.PlayerDevice;
-import ru.mipt.bit.platformer.graphics.GameGraphics;
-import ru.mipt.bit.platformer.graphics.GdxGameUtils;
-import ru.mipt.bit.platformer.graphics.RectangleMovement;
-import ru.mipt.bit.platformer.graphics.ToggleHealthBarCommand;
-import ru.mipt.bit.platformer.graphics.UISettings;
-import ru.mipt.bit.platformer.Command;
+import ru.mipt.bit.platformer.gdx.graphics.GameGraphics;
+import ru.mipt.bit.platformer.gdx.graphics.GdxGameUtils;
+import ru.mipt.bit.platformer.gdx.graphics.RectangleMovement;
+import ru.mipt.bit.platformer.gdx.graphics.ToggleHealthBarCommand;
+import ru.mipt.bit.platformer.gdx.graphics.UISettings;
+import ru.mipt.bit.platformer.logic.Command;
 import ru.mipt.bit.platformer.logic.GameState;
 import ru.mipt.bit.platformer.logic.MoveCommand;
 import ru.mipt.bit.platformer.logic.ShootCommand;
 
-import static ru.mipt.bit.platformer.graphics.GdxGameUtils.getSingleLayer;
+import static ru.mipt.bit.platformer.gdx.graphics.GdxGameUtils.getSingleLayer;
 
 public class GameDriver implements ApplicationListener {
 
@@ -124,7 +123,7 @@ public class GameDriver implements ApplicationListener {
             return Collections.emptyList();
         }
         final var commands = new ArrayList<Command>();
-        playerDevice.getMoveDirection()
+        playerDevice.getRequestedMoveDirection()
                 .map(
                         direction -> new MoveCommand(
                                 gameState.getPlayer(),
@@ -135,7 +134,7 @@ public class GameDriver implements ApplicationListener {
         if (playerDevice.isShootRequested()) {
             commands.add(new ShootCommand(gameState.getPlayer(), gameState));
         }
-        if (playerDevice.isHealthBarToggle()) {
+        if (playerDevice.isHealthToggleRequested()) {
             commands.add(new ToggleHealthBarCommand(gameGraphics.getUiSettings()));
         }
         return commands;

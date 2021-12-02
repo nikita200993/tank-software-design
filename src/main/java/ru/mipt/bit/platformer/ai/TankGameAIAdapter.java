@@ -11,7 +11,7 @@ import org.awesome.ai.state.movable.Bot;
 import org.awesome.ai.state.movable.Orientation;
 import org.awesome.ai.state.movable.Player;
 import ru.mipt.bit.platformer.logic.Colliding;
-import ru.mipt.bit.platformer.Command;
+import ru.mipt.bit.platformer.logic.Command;
 import ru.mipt.bit.platformer.logic.Direction;
 import ru.mipt.bit.platformer.logic.GameState;
 import ru.mipt.bit.platformer.logic.MoveCommand;

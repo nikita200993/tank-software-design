@@ -2,7 +2,7 @@ package ru.mipt.bit.platformer.ai;
 
 import java.util.List;
 
-import ru.mipt.bit.platformer.Command;
+import ru.mipt.bit.platformer.logic.Command;
 import ru.mipt.bit.platformer.logic.GameState;
 
 public interface TankGameAI {

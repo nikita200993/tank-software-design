@@ -1,6 +1,6 @@
 @ParametersAreNonnullByDefault
 @FieldsAreNonNullByDefault
-package ru.mipt.bit.platformer.device;
+package ru.mipt.bit.platformer.gdx.device;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 

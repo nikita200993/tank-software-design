@@ -1,11 +1,9 @@
-package ru.mipt.bit.platformer.graphics;
+package ru.mipt.bit.platformer.gdx.graphics;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import ru.mipt.bit.platformer.logic.GameObjectView;
-
-import static ru.mipt.bit.platformer.graphics.GdxGameUtils.drawTextureRegionUnscaled;
 
 public class GraphicObject implements Renderable {
 
@@ -35,7 +33,7 @@ public class GraphicObject implements Renderable {
     @Override
     public void render() {
         rectangleMovement.moveRectangle(rectangle, view.position());
-        drawTextureRegionUnscaled(batch, textureRegion, rectangle, view.angle());
+        GdxGameUtils.drawTextureRegionUnscaled(batch, textureRegion, rectangle, view.angle());
     }
 
     public GameObjectView getView() {

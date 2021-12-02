@@ -1,14 +1,16 @@
-package ru.mipt.bit.platformer.device;
+package ru.mipt.bit.platformer.gdx.device;
 
 import java.util.Optional;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import ru.mipt.bit.platformer.driver.PlayerDevice;
 import ru.mipt.bit.platformer.logic.Direction;
 
-public class PlayerDevice {
+public class PlayerDeviceImpl implements PlayerDevice {
 
-    public Optional<Direction> getMoveDirection() {
+    @Override
+    public Optional<Direction> getRequestedMoveDirection() {
         if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
             return Optional.of(Direction.UP);
         } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
@@ -22,11 +24,13 @@ public class PlayerDevice {
         }
     }
 
+    @Override
     public boolean isShootRequested() {
         return Gdx.input.isKeyPressed(Input.Keys.SPACE);
     }
 
-    public boolean isHealthBarToggle() {
+    @Override
+    public boolean isHealthToggleRequested() {
         return Gdx.input.isKeyJustPressed(Input.Keys.L);
     }
 }

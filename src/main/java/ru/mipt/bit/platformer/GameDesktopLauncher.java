@@ -4,10 +4,9 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import org.awesome.ai.strategy.NotRecommendingAI;
 import ru.mipt.bit.platformer.ai.TankGameAIAdapter;
-import ru.mipt.bit.platformer.device.PlayerDevice;
+import ru.mipt.bit.platformer.gdx.device.PlayerDeviceImpl;
 import ru.mipt.bit.platformer.driver.GameDriver;
 import ru.mipt.bit.platformer.driver.initalizers.RandomGameLevelInitializer;
-import ru.mipt.bit.platformer.graphics.UISettings;
 
 public class GameDesktopLauncher {
 
@@ -20,7 +19,7 @@ public class GameDesktopLauncher {
 
     private static GameDriver createGameDriver() {
         return new GameDriver(
-                new PlayerDevice(),
+                new PlayerDeviceImpl(),
                 new RandomGameLevelInitializer(2, 2),
                 new TankGameAIAdapter(new NotRecommendingAI())
         );

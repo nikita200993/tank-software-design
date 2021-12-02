@@ -1,4 +1,4 @@
-package ru.mipt.bit.platformer.graphics;
+package ru.mipt.bit.platformer.gdx.graphics;
 
 import java.util.function.Supplier;
 
@@ -6,14 +6,14 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 
-public class HeathRenderer implements Renderable {
+public class HealthRenderer implements Renderable {
     private final UISettings uiSettings;
     private final ShapeRenderer shapeRenderer;
     private final Renderable renderable;
     private final Supplier<Integer> healthPercent;
     private final Rectangle rectangle;
 
-    public HeathRenderer(
+    public HealthRenderer(
             UISettings uiSettings,
             ShapeRenderer shapeRenderer,
             Supplier<Integer> healthPercent,

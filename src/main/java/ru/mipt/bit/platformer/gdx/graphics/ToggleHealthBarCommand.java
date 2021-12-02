@@ -1,6 +1,6 @@
-package ru.mipt.bit.platformer.graphics;
+package ru.mipt.bit.platformer.gdx.graphics;
 
-import ru.mipt.bit.platformer.Command;
+import ru.mipt.bit.platformer.logic.Command;
 
 public class ToggleHealthBarCommand implements Command {
     private final UISettings uiSettings;

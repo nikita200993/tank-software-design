@@ -1,4 +1,4 @@
-package ru.mipt.bit.platformer.graphics;
+package ru.mipt.bit.platformer.gdx.graphics;
 
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
@@ -108,7 +108,7 @@ public class GameGraphics implements GameLogicListener {
                 rectangleMovement,
                 tank
         );
-        return new HeathRenderer(
+        return new HealthRenderer(
                 uiSettings,
                 shapeRenderer,
                 tank::getHealthPercent,

@@ -1,6 +1,6 @@
 @ParametersAreNonnullByDefault
 @FieldsAreNonNullByDefault
-package ru.mipt.bit.platformer.graphics;
+package ru.mipt.bit.platformer.gdx.graphics;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
