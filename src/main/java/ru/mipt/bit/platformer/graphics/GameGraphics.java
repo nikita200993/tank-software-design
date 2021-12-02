@@ -8,36 +8,43 @@ import java.util.Map;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapRenderer;
 import ru.mipt.bit.platformer.logic.GameLogicListener;
 import ru.mipt.bit.platformer.logic.GameObjectView;
-import ru.mipt.bit.platformer.logic.HealthAware;
+import ru.mipt.bit.platformer.logic.Tank;
 
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 
 public class GameGraphics implements GameLogicListener {
 
-    private final TextureRegion tank;
-    private final TextureRegion tree;
-    private final TextureRegion bullet;
+    private final TextureRegion tankTexture;
+    private final TextureRegion treeTexture;
+    private final TextureRegion bulletTexture;
+    private final UISettings uiSettings;
     private final Batch batch;
+    private final ShapeRenderer shapeRenderer;
     private final MapRenderer mapRenderer;
     private final RectangleMovement rectangleMovement;
     private final Map<Object, Renderable> gameObjectToRenderable;
     private final List<GameObjectView> dead;
 
     public GameGraphics(
-            final TextureRegion tank,
-            final TextureRegion tree,
-            final TextureRegion bullet,
-            final Batch batch,
-            final MapRenderer mapRenderer,
-            final RectangleMovement rectangleMovement
+            TextureRegion tankTexture,
+            TextureRegion treeTexture,
+            TextureRegion bulletTexture,
+            UISettings uiSettings,
+            Batch batch,
+            ShapeRenderer shapeRenderer,
+            MapRenderer mapRenderer,
+            RectangleMovement rectangleMovement
     ) {
-        this.tank = tank;
-        this.tree = tree;
-        this.bullet = bullet;
+        this.tankTexture = tankTexture;
+        this.treeTexture = treeTexture;
+        this.bulletTexture = bulletTexture;
+        this.uiSettings = uiSettings;
         this.batch = batch;
+        this.shapeRenderer = shapeRenderer;
         this.mapRenderer = mapRenderer;
         this.rectangleMovement = rectangleMovement;
         this.gameObjectToRenderable = new IdentityHashMap<>();
@@ -49,15 +56,18 @@ public class GameGraphics implements GameLogicListener {
         clearScreen();
         mapRenderer.render();
         batch.begin();
-        gameObjectToRenderable.values().forEach(it -> it.render(batch));
+        gameObjectToRenderable.values().forEach(Renderable::render);
         batch.end();
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        gameObjectToRenderable.values().forEach(Renderable::renderShape);
+        shapeRenderer.end();
         removeDead();
         dead.clear();
     }
 
     @Override
     public void onRegister(
-            final List<? extends GameObjectView> tanks,
+            final List<? extends Tank> tanks,
             final List<? extends GameObjectView> trees,
             final List<? extends GameObjectView> bullets
     ) {
@@ -81,18 +91,8 @@ public class GameGraphics implements GameLogicListener {
         gameObjectToRenderable.put(bullet, createBullet(bullet));
     }
 
-    void toggleHealth() {
-        System.out.println("toggle called");
-        var copy = Map.copyOf(gameObjectToRenderable);
-        for (var objectRenderableEntry : copy.entrySet()) {
-            var gameObject = objectRenderableEntry.getKey();
-            var renderable = objectRenderableEntry.getValue();
-            if (renderable instanceof HeathAwareRenderer) {
-                gameObjectToRenderable.put(gameObject, ((HeathAwareRenderer) renderable).unwrap());
-            } else if (gameObject instanceof HealthAware) {
-                gameObjectToRenderable.put(gameObject, new HeathAwareRenderer((HealthAware) gameObject, renderable));
-            }
-        }
+    public UISettings getUiSettings() {
+        return uiSettings;
     }
 
     private void removeDead() {
@@ -101,17 +101,26 @@ public class GameGraphics implements GameLogicListener {
         }
     }
 
-    private GraphicObject createTank(final GameObjectView gameObjectView) {
-        return new GraphicObject(
-                tank,
+    private Renderable createTank(final Tank tank) {
+        var tankGraphics = new GraphicObject(
+                batch,
+                tankTexture,
                 rectangleMovement,
-                gameObjectView
+                tank
+        );
+        return new HeathRenderer(
+                uiSettings,
+                shapeRenderer,
+                tank::getHealthPercent,
+                tankGraphics,
+                tankGraphics.getRectangle()
         );
     }
 
-    private GraphicObject createTree(final GameObjectView gameObjectView) {
+    private Renderable createTree(final GameObjectView gameObjectView) {
         return new GraphicObject(
-                tree,
+                batch,
+                treeTexture,
                 rectangleMovement,
                 gameObjectView
         );
@@ -119,7 +128,8 @@ public class GameGraphics implements GameLogicListener {
 
     private GraphicObject createBullet(final GameObjectView gameObjectView) {
         return new GraphicObject(
-                bullet,
+                batch,
+                bulletTexture,
                 rectangleMovement,
                 gameObjectView
         );

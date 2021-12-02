@@ -54,7 +54,7 @@ public class GameState {
 
     public void addListener(final GameLogicListener listener) {
         listeners.add(listener);
-        final var tanks = new ArrayList<GameObjectView>(gameObjects.getAiTanks());
+        final var tanks = new ArrayList<>(gameObjects.getAiTanks());
         if (getPlayer().isAlive()) {
             tanks.add(getPlayer());
         }

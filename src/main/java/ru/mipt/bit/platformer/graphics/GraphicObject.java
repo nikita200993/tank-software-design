@@ -9,16 +9,19 @@ import static ru.mipt.bit.platformer.graphics.GdxGameUtils.drawTextureRegionUnsc
 
 public class GraphicObject implements Renderable {
 
+    private final Batch batch;
     private final TextureRegion textureRegion;
     private final RectangleMovement rectangleMovement;
     private final GameObjectView view;
     private final Rectangle rectangle;
 
     public GraphicObject(
-            final TextureRegion textureRegion,
-            final RectangleMovement rectangleMovement,
-            final GameObjectView view
+            Batch batch,
+            TextureRegion textureRegion,
+            RectangleMovement rectangleMovement,
+            GameObjectView view
     ) {
+        this.batch = batch;
         this.textureRegion = textureRegion;
         this.rectangleMovement = rectangleMovement;
         this.view = view;
@@ -30,12 +33,16 @@ public class GraphicObject implements Renderable {
 
 
     @Override
-    public void render(final Batch batch) {
+    public void render() {
         rectangleMovement.moveRectangle(rectangle, view.position());
         drawTextureRegionUnscaled(batch, textureRegion, rectangle, view.angle());
     }
 
     public GameObjectView getView() {
         return view;
+    }
+
+    Rectangle getRectangle() {
+        return rectangle;
     }
 }

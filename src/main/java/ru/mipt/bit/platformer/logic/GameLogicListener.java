@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface GameLogicListener {
     default void onRegister(
-            List<? extends GameObjectView> tanks,
+            List<? extends Tank> tanks,
             List<? extends GameObjectView> trees,
             List<? extends GameObjectView> bullets
     ) {

@@ -27,6 +27,6 @@ public class PlayerDevice {
     }
 
     public boolean isHealthBarToggle() {
-        return Gdx.input.isKeyPressed(Input.Keys.L);
+        return Gdx.input.isKeyJustPressed(Input.Keys.L);
     }
 }

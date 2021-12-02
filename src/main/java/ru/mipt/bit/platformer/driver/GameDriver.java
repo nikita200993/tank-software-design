@@ -9,6 +9,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -19,7 +20,8 @@ import ru.mipt.bit.platformer.graphics.GameGraphics;
 import ru.mipt.bit.platformer.graphics.GdxGameUtils;
 import ru.mipt.bit.platformer.graphics.RectangleMovement;
 import ru.mipt.bit.platformer.graphics.ToggleHealthBarCommand;
-import ru.mipt.bit.platformer.logic.Command;
+import ru.mipt.bit.platformer.graphics.UISettings;
+import ru.mipt.bit.platformer.Command;
 import ru.mipt.bit.platformer.logic.GameState;
 import ru.mipt.bit.platformer.logic.MoveCommand;
 import ru.mipt.bit.platformer.logic.ShootCommand;
@@ -36,9 +38,9 @@ public class GameDriver implements ApplicationListener {
     private final List<Disposable> disposables;
 
     public GameDriver(
-            final PlayerDevice playerDevice,
-            final GameLevelInitializer gameLevelInitializer,
-            final TankGameAI ai
+            PlayerDevice playerDevice,
+            GameLevelInitializer gameLevelInitializer,
+            TankGameAI ai
     ) {
         this.playerDevice = playerDevice;
         this.gameLevelInitializer = gameLevelInitializer;
@@ -89,20 +91,25 @@ public class GameDriver implements ApplicationListener {
     }
 
     private GameGraphics createGraphics(final TiledMap levelMap) {
-        final var batch = new SpriteBatch();
-        disposables.add(batch);
+
         final TiledMapTileLayer layer = getSingleLayer(levelMap);
         final var tankTexture = new Texture("images/tank_blue.png");
         final var treeTexture = new Texture("images/greenTree.png");
         final var bulletTexture = new Texture("images/bullet.png");
+        final var batch = new SpriteBatch();
+        final var shapeRenderer = new ShapeRenderer();
         disposables.add(tankTexture);
         disposables.add(treeTexture);
         disposables.add(bulletTexture);
+        disposables.add(batch);
+        disposables.add(shapeRenderer);
         return new GameGraphics(
                 new TextureRegion(tankTexture),
                 new TextureRegion(treeTexture),
                 new TextureRegion(bulletTexture),
-                new SpriteBatch(),
+                new UISettings(),
+                batch,
+                shapeRenderer,
                 GdxGameUtils.createSingleLayerMapRenderer(levelMap, batch),
                 new RectangleMovement(layer.getTileWidth(), layer.getTileHeight())
         );
@@ -129,7 +136,7 @@ public class GameDriver implements ApplicationListener {
             commands.add(new ShootCommand(gameState.getPlayer(), gameState));
         }
         if (playerDevice.isHealthBarToggle()) {
-            commands.add(new ToggleHealthBarCommand(gameGraphics));
+            commands.add(new ToggleHealthBarCommand(gameGraphics.getUiSettings()));
         }
         return commands;
     }

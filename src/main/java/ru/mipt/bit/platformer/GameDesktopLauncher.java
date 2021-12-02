@@ -7,6 +7,7 @@ import ru.mipt.bit.platformer.ai.TankGameAIAdapter;
 import ru.mipt.bit.platformer.device.PlayerDevice;
 import ru.mipt.bit.platformer.driver.GameDriver;
 import ru.mipt.bit.platformer.driver.initalizers.RandomGameLevelInitializer;
+import ru.mipt.bit.platformer.graphics.UISettings;
 
 public class GameDesktopLauncher {
 

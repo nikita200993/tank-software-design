@@ -1,4 +1,4 @@
-package ru.mipt.bit.platformer.logic;
+package ru.mipt.bit.platformer;
 
 public interface Command {
     void execute();

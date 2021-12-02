@@ -1,16 +1,16 @@
 package ru.mipt.bit.platformer.graphics;
 
-import ru.mipt.bit.platformer.logic.Command;
+import ru.mipt.bit.platformer.Command;
 
 public class ToggleHealthBarCommand implements Command {
-    private final GameGraphics gameGraphics;
+    private final UISettings uiSettings;
 
-    public ToggleHealthBarCommand(GameGraphics gameGraphics) {
-        this.gameGraphics = gameGraphics;
+    public ToggleHealthBarCommand(UISettings uiSettings) {
+        this.uiSettings = uiSettings;
     }
 
     @Override
     public void execute() {
-        gameGraphics.toggleHealth();
+        uiSettings.toggleHealth();
     }
 }

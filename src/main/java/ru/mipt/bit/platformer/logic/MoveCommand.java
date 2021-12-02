@@ -2,6 +2,8 @@ package ru.mipt.bit.platformer.logic;
 
 import java.util.List;
 
+import ru.mipt.bit.platformer.Command;
+
 public class MoveCommand implements Command {
     private final Tank tank;
     private final Direction direction;
