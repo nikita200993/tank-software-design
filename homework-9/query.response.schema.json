@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "query.schema.json",
+  "title": "Instagram queries",
+  "description": "Describes query requests for instagram service",
+  "type": "object",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "op_type": {
+          "const": "FETCH_USER_FEED"
+        },
+        "posts": {
+          "type": "array",
+          "items": {
+            "type": "#/$defs/post"
+          }
+        }
+      },
+      "required": [
+        "posts"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "op_type": {
+          "const": "FETCH_COMMENTS"
+        },
+        "comments": {
+          "type": "array",
+          "items": {
+            "type": "#/$defs/comment"
+          }
+        }
+      },
+      "required": [
+        "post_id",
+        "offset",
+        "limit"
+      ]
+    }
+  ],
+  "$defs": {
+    "post": {
+      "type": "object",
+      "properties": {
+        "post_id": {
+          "type": "integer"
+        },
+        "author": {
+          "type": "#/$defs/author"
+        },
+        "description": {
+          "type": "string"
+        },
+        "image": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "integer"
+        },
+        "likes_count": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "post_id",
+        "author",
+        "timestamp",
+        "likes_count"
+      ]
+    },
+    "comment": {
+      "type": "object",
+      "properties": {
+        "comment_id": {
+          "type": "integer"
+        },
+        "author": {
+          "type": "#/$defs/author"
+        },
+        "content": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "integer"
+        },
+        "likes_count": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "comment_id",
+        "author",
+        "content",
+        "timestamp",
+        "likes_count"
+      ]
+    },
+    "author": {
+      "author_id": {
+        "type": "integer"
+      },
+      "login": {
+        "type": "string"
+      },
+      "avatar": {
+        "type": "string"
+      }
+    }
+  }
+}
