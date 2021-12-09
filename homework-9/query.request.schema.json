@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "query.request.schema.json",
+  "title": "Instagram queries",
+  "description": "Describes query requests for instagram service",
+  "type": "object",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "op_type": {
+          "const": "FETCH_USER_FEED"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "offset": {
+          "type": "integer"
+        },
+        "limit": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "offset",
+        "limit"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "op_type": {
+          "const": "FETCH_COMMENTS"
+        },
+        "post_id": {
+          "type": "integer"
+        },
+        "offset": {
+          "type": "integer"
+        },
+        "limit": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "post_id",
+        "offset",
+        "limit"
+      ]
+    }
+  ]
+}
