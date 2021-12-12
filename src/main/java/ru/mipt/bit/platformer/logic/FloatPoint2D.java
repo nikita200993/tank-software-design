@@ -20,10 +20,6 @@ public class FloatPoint2D {
         return new FloatPoint2D(x + other.x, y + other.y);
     }
 
-    public FloatPoint2D minus(final FloatPoint2D other) {
-        return new FloatPoint2D(x - other.x, y - other.y);
-    }
-
     public FloatPoint2D multiply(final float other) {
         return new FloatPoint2D(x * other, y * other);
     }
