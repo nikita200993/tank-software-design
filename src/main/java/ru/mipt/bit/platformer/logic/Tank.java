@@ -4,7 +4,7 @@ import java.util.List;
 
 import ru.mipt.bit.platformer.logic.shoot.Canon;
 
-public class Tank implements Colliding, GameObjectView, HealthAware {
+public class Tank implements Colliding, GameObjectView {
     private final TankMove tankMove;
     private final Canon canon;
     private final int maxHealth;
