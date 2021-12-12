@@ -25,14 +25,6 @@ public class Level {
         this.listeners = new ArrayList<>();
     }
 
-    public void shoot(Tank tank) {
-        tank.shoot().ifPresent(this::addBullet);
-    }
-
-    public boolean isPlayerAlive() {
-        return getPlayer().isAlive();
-    }
-
     public void update(final float timeTick) {
         processDeathsOnThisStep(timeTick);
         updateSurvived(timeTick);

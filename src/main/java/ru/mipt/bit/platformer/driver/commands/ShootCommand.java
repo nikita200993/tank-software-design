@@ -19,6 +19,6 @@ public class ShootCommand implements Command {
 
     @Override
     public void execute() {
-        level.shoot(tank);
+        tank.shoot(level);
     }
 }

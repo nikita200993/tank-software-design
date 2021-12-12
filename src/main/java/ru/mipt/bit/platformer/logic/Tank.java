@@ -1,9 +1,7 @@
 package ru.mipt.bit.platformer.logic;
 
 import java.util.List;
-import java.util.Optional;
 
-import ru.mipt.bit.platformer.logic.shoot.Bullet;
 import ru.mipt.bit.platformer.logic.shoot.Canon;
 
 public class Tank implements Colliding, GameObjectView, HealthAware {
@@ -55,8 +53,8 @@ public class Tank implements Colliding, GameObjectView, HealthAware {
         return this.health > 0;
     }
 
-    public Optional<Bullet> shoot() {
-        return tankState.shoot();
+    public void shoot(Level level) {
+        tankState.shoot(level);
     }
 
     public Point2D currentPosition() {

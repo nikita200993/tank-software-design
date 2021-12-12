@@ -1,9 +1,6 @@
 package ru.mipt.bit.platformer.logic;
 
 import java.util.List;
-import java.util.Optional;
-
-import ru.mipt.bit.platformer.logic.shoot.Bullet;
 
 /**
  * Domain entity.
@@ -17,8 +14,7 @@ public class HeavyDamagedState implements TankState {
     }
 
     @Override
-    public Optional<Bullet> shoot() {
-        return Optional.empty();
+    public void shoot(Level level) {
     }
 
     @Override

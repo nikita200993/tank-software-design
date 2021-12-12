@@ -9,7 +9,7 @@ import ru.mipt.bit.platformer.logic.shoot.Bullet;
  * Domain entity.
  */
 interface TankState {
-    Optional<Bullet> shoot();
+    void shoot(Level level);
 
     void update(float tick);
 

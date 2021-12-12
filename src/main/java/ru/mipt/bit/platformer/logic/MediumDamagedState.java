@@ -1,9 +1,6 @@
 package ru.mipt.bit.platformer.logic;
 
 import java.util.List;
-import java.util.Optional;
-
-import ru.mipt.bit.platformer.logic.shoot.Bullet;
 
 /**
  * Domain entity.
@@ -16,13 +13,13 @@ public class MediumDamagedState implements TankState {
     }
 
     @Override
-    public Optional<Bullet> shoot() {
+    public void shoot(Level level) {
         var canon = tank.getCanon();
         var direction = tank.getTankMove().getDirection();
-        return canon.shoot(
+        canon.shoot(
                 direction,
                 tank.position().plus(FloatPoint2D.from(direction.unitVector()).multiply(0.5f))
-        );
+        ).ifPresent(level::addBullet);
     }
 
     @Override
