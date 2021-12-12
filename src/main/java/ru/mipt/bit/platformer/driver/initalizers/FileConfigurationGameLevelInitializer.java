@@ -6,8 +6,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
+
+import javax.annotation.Nullable;
 
 import ru.mipt.bit.platformer.driver.GameLevelInitializer;
 import ru.mipt.bit.platformer.logic.GameObjects;
@@ -31,6 +32,21 @@ public class FileConfigurationGameLevelInitializer implements GameLevelInitializ
     public Level init(final int width, final int height) {
         final List<Obstacle> obstacles = new ArrayList<>();
         Tank player = null;
+        final List<String> lines = getLines(height);
+        for (int i = 0; i < lines.size(); i++) {
+            final var line = lines.get(i);
+            checkLineCorrespondToWidth(width, line);
+            var result = parseLine(line, height, i);
+            player = result.player;
+            obstacles.addAll(result.obstacles);
+        }
+        if (player == null) {
+            throw new IllegalStateException("resource at path '" + resourceDescriptor + "' doesn't contain player");
+        }
+        return new Level(new GameObjects(player, new ArrayList<>(), obstacles, new ArrayList<>()), width, height);
+    }
+
+    private List<String> getLines(int height) {
         final String content = loadContent();
         final List<String> lines;
         if (content.contains("\r\n")) {
@@ -39,29 +55,7 @@ public class FileConfigurationGameLevelInitializer implements GameLevelInitializ
             lines = Arrays.asList(content.split("\n"));
         }
         checkContentCorrespondsToHeigth(height, lines);
-        for (int i = 0; i < lines.size(); i++) {
-            final var line = lines.get(i);
-            checkLineCorrespondToWidth(width, line);
-            for (int j = 0; j < line.length(); j++) {
-                final char aChar = line.charAt(j);
-                switch (aChar) {
-                    case 'T':
-                        obstacles.add(new Obstacle(new Point2D(j, height - 1 - i)));
-                        break;
-                    case 'X': {
-                        if (player != null) {
-                            throw new IllegalStateException("there must be one player in the game");
-                        }
-                        player = new Tank(new Point2D(j, height - 1 - i));
-                        break;
-                    }
-                }
-            }
-        }
-        if (player == null) {
-            throw new IllegalStateException("resource at path '" + resourceDescriptor + "' doesn't contain player");
-        }
-        return new Level(new GameObjects(player, new ArrayList<>(), obstacles, new ArrayList<>()), width, height);
+        return lines;
     }
 
     private void checkContentCorrespondsToHeigth(final int height, final List<String> lines) {
@@ -91,6 +85,38 @@ public class FileConfigurationGameLevelInitializer implements GameLevelInitializ
             }
         } catch (final IOException ex) {
             throw new UncheckedIOException(ex);
+        }
+    }
+
+    private static LineParseResult parseLine(String line, int height, int currentLineIndex) {
+        Tank player = null;
+        var obstacles = new ArrayList<Obstacle>();
+        for (int j = 0; j < line.length(); j++) {
+            final char aChar = line.charAt(j);
+            switch (aChar) {
+                case 'T':
+                    obstacles.add(new Obstacle(new Point2D(j, height - 1 - currentLineIndex)));
+                    break;
+                case 'X': {
+                    if (player != null) {
+                        throw new IllegalStateException("there must be one player in the game");
+                    }
+                    player = new Tank(new Point2D(j, height - 1 - currentLineIndex));
+                    break;
+                }
+            }
+        }
+        return new LineParseResult(obstacles, player);
+    }
+
+    private static class LineParseResult {
+        private final List<Obstacle> obstacles;
+        @Nullable
+        private final Tank player;
+
+        LineParseResult(List<Obstacle> obstacles, @Nullable Tank player) {
+            this.obstacles = obstacles;
+            this.player = player;
         }
     }
 }
