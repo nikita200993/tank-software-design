@@ -5,6 +5,7 @@ import java.util.function.Supplier;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
+import ru.mipt.bit.platformer.driver.UISettings;
 
 /**
  * Adapter.

@@ -1,4 +1,4 @@
-package ru.mipt.bit.platformer.gdx.graphics;
+package ru.mipt.bit.platformer.driver;
 
 /**
  * Domain entity.

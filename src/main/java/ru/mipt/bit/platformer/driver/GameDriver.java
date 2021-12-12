@@ -1,8 +1,9 @@
 package ru.mipt.bit.platformer.driver;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
@@ -14,37 +15,42 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.utils.Disposable;
-import ru.mipt.bit.platformer.ai.TankGameAI;
 import ru.mipt.bit.platformer.gdx.graphics.GameGraphics;
 import ru.mipt.bit.platformer.gdx.graphics.GdxGameUtils;
 import ru.mipt.bit.platformer.gdx.graphics.RectangleMovement;
-import ru.mipt.bit.platformer.gdx.graphics.ToggleHealthBarCommand;
-import ru.mipt.bit.platformer.gdx.graphics.UISettings;
 import ru.mipt.bit.platformer.logic.Command;
+import ru.mipt.bit.platformer.logic.CreationEvent;
+import ru.mipt.bit.platformer.logic.DeathEvent;
+import ru.mipt.bit.platformer.logic.GameEvent;
+import ru.mipt.bit.platformer.logic.GameLogicListener;
+import ru.mipt.bit.platformer.logic.GameObjectView;
 import ru.mipt.bit.platformer.logic.Level;
+import ru.mipt.bit.platformer.logic.Tank;
 
 import static ru.mipt.bit.platformer.gdx.graphics.GdxGameUtils.getSingleLayer;
 
 /**
  * Input adapter. (framework callbacks delegated to app layer).
  */
-public class GameDriver implements ApplicationListener {
+public class GameDriver implements ApplicationListener, GameLogicListener {
 
-    private final PlayerDevice playerDevice;
     private final GameLevelInitializer gameLevelInitializer;
-    private final TankGameAI ai;
     private Level gameState;
-    private GameGraphics gameGraphics;
+    private final UISettings uiSettings;
     private final List<Disposable> disposables;
+    private final Map<Tank, TankController> tankControllers;
+    private final TankControllerFactory tankControllerFactory;
+    private GameGraphics gameGraphics;
 
     public GameDriver(
-            PlayerDevice playerDevice,
             GameLevelInitializer gameLevelInitializer,
-            TankGameAI ai
+            TankControllerFactory tankControllerFactory,
+            UISettings uiSettings
     ) {
-        this.playerDevice = playerDevice;
         this.gameLevelInitializer = gameLevelInitializer;
-        this.ai = ai;
+        this.tankControllerFactory = tankControllerFactory;
+        this.uiSettings = uiSettings;
+        this.tankControllers = new HashMap<>();
         this.disposables = new ArrayList<>();
     }
 
@@ -59,6 +65,7 @@ public class GameDriver implements ApplicationListener {
         );
         gameGraphics = createGraphics(levelMap);
         gameState.addListener(gameGraphics);
+        gameState.addListener(this);
     }
 
 
@@ -66,10 +73,22 @@ public class GameDriver implements ApplicationListener {
     public void render() {
         float timePassedSinceLastRender = getTimePassedSinceLastRender();
         gameState.update(timePassedSinceLastRender);
-        final var commands = new ArrayList<>(getPlayerCommands());
-        commands.addAll(ai.computeAiCommands(gameState));
-        commands.forEach(Command::execute);
+        collectCommands().forEach(Command::execute);
         gameGraphics.render();
+    }
+
+    @Override
+    public void onEvent(GameEvent<? extends GameObjectView> gameEvent) {
+        var source = gameEvent.source();
+        if (!(source instanceof Tank)) {
+            return;
+        }
+        var tank = (Tank) gameEvent.source();
+        if (gameEvent instanceof CreationEvent) {
+            tankControllers.put(tank, tankControllerFactory.create(tank, gameState, uiSettings));
+        } else if (gameEvent instanceof DeathEvent) {
+            tankControllers.remove(tank);
+        }
     }
 
     @Override
@@ -106,7 +125,7 @@ public class GameDriver implements ApplicationListener {
                 new TextureRegion(tankTexture),
                 new TextureRegion(treeTexture),
                 new TextureRegion(bulletTexture),
-                new UISettings(),
+                uiSettings,
                 batch,
                 shapeRenderer,
                 GdxGameUtils.createSingleLayerMapRenderer(levelMap, batch),
@@ -118,25 +137,11 @@ public class GameDriver implements ApplicationListener {
         return Gdx.graphics.getDeltaTime();
     }
 
-    private List<Command> getPlayerCommands() {
-        if (!gameState.isPlayerAlive()) {
-            return Collections.emptyList();
+    private List<Command> collectCommands() {
+        var result = new ArrayList<Command>();
+        for (var controller : tankControllers.values()) {
+            result.addAll(controller.getRequestedCommands());
         }
-        final var commands = new ArrayList<Command>();
-        playerDevice.getRequestedMoveDirection()
-                .map(
-                        direction -> new MoveCommand(
-                                gameState.getPlayer(),
-                                direction,
-                                gameState.getCollidingObjects()
-                        )
-                ).ifPresent(commands::add);
-        if (playerDevice.isShootRequested()) {
-            commands.add(new ShootCommand(gameState.getPlayer(), gameState));
-        }
-        if (playerDevice.isHealthToggleRequested()) {
-            commands.add(new ToggleHealthBarCommand(gameGraphics.getUiSettings()));
-        }
-        return commands;
+        return result;
     }
 }

@@ -1,5 +1,6 @@
-package ru.mipt.bit.platformer.gdx.graphics;
+package ru.mipt.bit.platformer.driver.commands;
 
+import ru.mipt.bit.platformer.driver.UISettings;
 import ru.mipt.bit.platformer.logic.Command;
 
 /**

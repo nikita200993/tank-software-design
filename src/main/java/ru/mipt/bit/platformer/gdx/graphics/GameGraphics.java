@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapRenderer;
+import ru.mipt.bit.platformer.driver.UISettings;
 import ru.mipt.bit.platformer.logic.CreationEvent;
 import ru.mipt.bit.platformer.logic.DeathEvent;
 import ru.mipt.bit.platformer.logic.GameEvent;
@@ -95,10 +96,6 @@ public class GameGraphics implements GameLogicListener {
 
     private void onDeath(DeathEvent deathEvent) {
         dead.add(deathEvent.source());
-    }
-
-    public UISettings getUiSettings() {
-        return uiSettings;
     }
 
     private void removeDead() {

@@ -1,4 +1,4 @@
-package ru.mipt.bit.platformer.driver;
+package ru.mipt.bit.platformer.driver.commands;
 
 import java.util.List;
 

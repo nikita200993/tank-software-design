@@ -1,4 +1,4 @@
-package ru.mipt.bit.platformer.ai;
+package ru.mipt.bit.platformer.driver.controllers;
 
 import java.util.List;
 import java.util.function.Function;
@@ -10,31 +10,31 @@ import org.awesome.ai.state.immovable.Obstacle;
 import org.awesome.ai.state.movable.Bot;
 import org.awesome.ai.state.movable.Orientation;
 import org.awesome.ai.state.movable.Player;
-import ru.mipt.bit.platformer.driver.MoveCommand;
-import ru.mipt.bit.platformer.driver.ShootCommand;
+import ru.mipt.bit.platformer.driver.TankController;
+import ru.mipt.bit.platformer.driver.commands.MoveCommand;
+import ru.mipt.bit.platformer.driver.commands.ShootCommand;
 import ru.mipt.bit.platformer.logic.Colliding;
 import ru.mipt.bit.platformer.logic.Command;
 import ru.mipt.bit.platformer.logic.Direction;
 import ru.mipt.bit.platformer.logic.Level;
 import ru.mipt.bit.platformer.logic.Tank;
 
-/**
- * Output adapter.
- */
-public class TankGameAIAdapter implements TankGameAI {
-
+public class AIBotController implements TankController {
+    private final Tank tank;
+    private final Level level;
     private final AI ai;
 
-    public TankGameAIAdapter(final AI ai) {
+    public AIBotController(Tank tank, Level level, AI ai) {
+        this.tank = tank;
+        this.level = level;
         this.ai = ai;
     }
 
     @Override
-    public List<Command> computeAiCommands(final Level level) {
-        return ai.recommend(toLibraryGameState(level))
-                .stream()
-                .filter(recommendation -> recommendation.getActor().getSource() != level.getPlayer())
-                .map(recommendation -> toCommand(recommendation, level))
+    public List<Command> getRequestedCommands() {
+        return ai.recommend(toLibraryGameState(level)).stream()
+                .filter(it -> it.getActor().getSource() == tank)
+                .map(it -> toCommand(it, level))
                 .collect(Collectors.toList());
     }
 
@@ -44,7 +44,7 @@ public class TankGameAIAdapter implements TankGameAI {
                 .levelWidth(level.getWidth())
                 .bots(
                         level.getAiTanks().stream()
-                                .map(TankGameAIAdapter::toBot)
+                                .map(AIBotController::toBot)
                                 .collect(Collectors.toList())
                 )
                 .player(toPlayer(level.getPlayer()))

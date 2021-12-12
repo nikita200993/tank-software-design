@@ -1,4 +1,4 @@
-package ru.mipt.bit.platformer.driver;
+package ru.mipt.bit.platformer.driver.commands;
 
 import ru.mipt.bit.platformer.logic.Command;
 import ru.mipt.bit.platformer.logic.Level;
