@@ -98,9 +98,6 @@ public class FileConfigurationGameLevelInitializer implements GameLevelInitializ
                     obstacles.add(new Obstacle(new Point2D(j, height - 1 - currentLineIndex)));
                     break;
                 case 'X': {
-                    if (player != null) {
-                        throw new IllegalStateException("there must be one player in the game");
-                    }
                     player = new Tank(new Point2D(j, height - 1 - currentLineIndex));
                     break;
                 }
