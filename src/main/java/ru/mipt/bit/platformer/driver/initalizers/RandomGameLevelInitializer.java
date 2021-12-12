@@ -1,11 +1,15 @@
 package ru.mipt.bit.platformer.driver.initalizers;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import ru.mipt.bit.platformer.driver.GameLevelInitializer;
+import ru.mipt.bit.platformer.logic.GameObjects;
 import ru.mipt.bit.platformer.logic.Level;
+import ru.mipt.bit.platformer.logic.Obstacle;
 import ru.mipt.bit.platformer.logic.Point2D;
+import ru.mipt.bit.platformer.logic.Tank;
 
 /**
  * Input adapter.
@@ -36,10 +40,22 @@ public class RandomGameLevelInitializer implements GameLevelInitializer {
         }
         final List<Point2D> points = new RandomPointsGenerator(random, width, height)
                 .generatePoints(pointsNumber);
+        var player = new Tank(points.get(0));
+        var bots = new ArrayList<Tank>();
+        for (var botPosition : points.subList(1, 1 + enemies)) {
+            bots.add(new Tank(botPosition));
+        }
+        var obstacles = new ArrayList<Obstacle>();
+        for (var obstaclePosition : points.subList(1 + enemies, points.size())) {
+            obstacles.add(new Obstacle(obstaclePosition));
+        }
         return new Level(
-                points.get(0),
-                points.subList(1, 1 + enemies),
-                points.subList(1 + enemies, points.size()),
+                new GameObjects(
+                        player,
+                        bots,
+                        obstacles,
+                        new ArrayList<>()
+                ),
                 width,
                 height
         );

@@ -17,8 +17,8 @@ public class DeathService {
     private static final float HIT_RADIUS_TANK = 0.4f;
     private static final float HIT_RADIUS_TREE = 0.6f;
 
-    public List<Death> computeDeathsFromHits(final GameState gameState, final float timeTick) {
-        final var hits = collectHits(gameState, timeTick);
+    public List<Death> computeDeathsFromHits(final Level level, final float timeTick) {
+        final var hits = collectHits(level, timeTick);
         return computeDeathsFromHits(hits);
     }
 
@@ -43,7 +43,7 @@ public class DeathService {
         return deaths;
     }
 
-    private static List<Hit> collectHits(final GameState gameState, final float timeTick) {
+    private static List<Hit> collectHits(final Level gameState, final float timeTick) {
         final var bullets = gameState.getBullets();
         final var tanks = gameState.getAiTanks();
         final var obstacles = gameState.getObstacles();

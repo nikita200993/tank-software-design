@@ -21,7 +21,7 @@ import ru.mipt.bit.platformer.gdx.graphics.RectangleMovement;
 import ru.mipt.bit.platformer.gdx.graphics.ToggleHealthBarCommand;
 import ru.mipt.bit.platformer.gdx.graphics.UISettings;
 import ru.mipt.bit.platformer.logic.Command;
-import ru.mipt.bit.platformer.logic.GameState;
+import ru.mipt.bit.platformer.logic.Level;
 
 import static ru.mipt.bit.platformer.gdx.graphics.GdxGameUtils.getSingleLayer;
 
@@ -33,7 +33,7 @@ public class GameDriver implements ApplicationListener {
     private final PlayerDevice playerDevice;
     private final GameLevelInitializer gameLevelInitializer;
     private final TankGameAI ai;
-    private GameState gameState;
+    private Level gameState;
     private GameGraphics gameGraphics;
     private final List<Disposable> disposables;
 
@@ -53,11 +53,10 @@ public class GameDriver implements ApplicationListener {
         final var levelMap = new TmxMapLoader().load("level.tmx");
         disposables.add(levelMap);
         final var propMap = levelMap.getProperties();
-        final var level = gameLevelInitializer.init(
+        gameState = gameLevelInitializer.init(
                 (int) propMap.get("width"),
                 (int) propMap.get("height")
         );
-        gameState = GameState.create(level);
         gameGraphics = createGraphics(levelMap);
         gameState.addListener(gameGraphics);
     }

@@ -10,12 +10,12 @@ import org.awesome.ai.state.immovable.Obstacle;
 import org.awesome.ai.state.movable.Bot;
 import org.awesome.ai.state.movable.Orientation;
 import org.awesome.ai.state.movable.Player;
+import ru.mipt.bit.platformer.driver.MoveCommand;
+import ru.mipt.bit.platformer.driver.ShootCommand;
 import ru.mipt.bit.platformer.logic.Colliding;
 import ru.mipt.bit.platformer.logic.Command;
 import ru.mipt.bit.platformer.logic.Direction;
-import ru.mipt.bit.platformer.logic.GameState;
-import ru.mipt.bit.platformer.driver.MoveCommand;
-import ru.mipt.bit.platformer.driver.ShootCommand;
+import ru.mipt.bit.platformer.logic.Level;
 import ru.mipt.bit.platformer.logic.Tank;
 
 /**
@@ -30,26 +30,26 @@ public class TankGameAIAdapter implements TankGameAI {
     }
 
     @Override
-    public List<Command> computeAiCommands(final GameState gameState) {
-        return ai.recommend(toLibraryGameState(gameState))
+    public List<Command> computeAiCommands(final Level level) {
+        return ai.recommend(toLibraryGameState(level))
                 .stream()
-                .filter(recommendation -> recommendation.getActor().getSource() != gameState.getPlayer())
-                .map(recommendation -> toCommand(recommendation, gameState))
+                .filter(recommendation -> recommendation.getActor().getSource() != level.getPlayer())
+                .map(recommendation -> toCommand(recommendation, level))
                 .collect(Collectors.toList());
     }
 
-    private static org.awesome.ai.state.GameState toLibraryGameState(final GameState gameState) {
+    private static org.awesome.ai.state.GameState toLibraryGameState(final Level level) {
         return org.awesome.ai.state.GameState.builder()
-                .levelHeight(gameState.getHeight())
-                .levelWidth(gameState.getWidth())
+                .levelHeight(level.getHeight())
+                .levelWidth(level.getWidth())
                 .bots(
-                        gameState.getAiTanks().stream()
+                        level.getAiTanks().stream()
                                 .map(TankGameAIAdapter::toBot)
                                 .collect(Collectors.toList())
                 )
-                .player(toPlayer(gameState.getPlayer()))
+                .player(toPlayer(level.getPlayer()))
                 .obstacles(
-                        gameState.getObstacles().stream()
+                        level.getObstacles().stream()
                                 .map(ru.mipt.bit.platformer.logic.Obstacle::getPosition)
                                 .map(point -> new Obstacle(point.getX(), point.getY()))
                                 .collect(Collectors.toList())
@@ -79,12 +79,12 @@ public class TankGameAIAdapter implements TankGameAI {
                 .build();
     }
 
-    private static Command toCommand(final Recommendation recommendation, final GameState gameState) {
+    private static Command toCommand(final Recommendation recommendation, final Level level) {
         final var tank = (Tank) recommendation.getActor().getSource();
         final var action = recommendation.getAction();
         final var moveCommandFactory = moveCommandFactory(
                 tank,
-                gameState.getCollidingObjects()
+                level.getCollidingObjects()
         );
         switch (action) {
             case MoveNorth:
@@ -96,7 +96,7 @@ public class TankGameAIAdapter implements TankGameAI {
             case MoveWest:
                 return moveCommandFactory.apply(Direction.LEFT);
             case Shoot:
-                return new ShootCommand(tank, gameState);
+                return new ShootCommand(tank, level);
             default:
                 throw new IllegalStateException("Unexpected value: " + action);
         }

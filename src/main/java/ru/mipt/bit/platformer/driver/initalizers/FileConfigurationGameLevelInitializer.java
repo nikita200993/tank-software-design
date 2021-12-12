@@ -10,8 +10,11 @@ import java.util.Collections;
 import java.util.List;
 
 import ru.mipt.bit.platformer.driver.GameLevelInitializer;
+import ru.mipt.bit.platformer.logic.GameObjects;
 import ru.mipt.bit.platformer.logic.Level;
+import ru.mipt.bit.platformer.logic.Obstacle;
 import ru.mipt.bit.platformer.logic.Point2D;
+import ru.mipt.bit.platformer.logic.Tank;
 
 /**
  * Input adapter.
@@ -26,8 +29,8 @@ public class FileConfigurationGameLevelInitializer implements GameLevelInitializ
 
     @Override
     public Level init(final int width, final int height) {
-        final List<Point2D> obstacles = new ArrayList<>();
-        Point2D playerPoint = null;
+        final List<Obstacle> obstacles = new ArrayList<>();
+        Tank player = null;
         final String content = loadContent();
         final List<String> lines;
         if (content.contains("\r\n")) {
@@ -43,22 +46,22 @@ public class FileConfigurationGameLevelInitializer implements GameLevelInitializ
                 final char aChar = line.charAt(j);
                 switch (aChar) {
                     case 'T':
-                        obstacles.add(new Point2D(j, height - 1 - i));
+                        obstacles.add(new Obstacle(new Point2D(j, height - 1 - i)));
                         break;
                     case 'X': {
-                        if (playerPoint != null) {
+                        if (player != null) {
                             throw new IllegalStateException("there must be one player in the game");
                         }
-                        playerPoint = new Point2D(j, height - 1 - i);
+                        player = new Tank(new Point2D(j, height - 1 - i));
                         break;
                     }
                 }
             }
         }
-        if (playerPoint == null) {
+        if (player == null) {
             throw new IllegalStateException("resource at path '" + resourceDescriptor + "' doesn't contain player");
         }
-        return new Level(playerPoint, Collections.emptyList(), obstacles, width, height);
+        return new Level(new GameObjects(player, new ArrayList<>(), obstacles, new ArrayList<>()), width, height);
     }
 
     private void checkContentCorrespondsToHeigth(final int height, final List<String> lines) {

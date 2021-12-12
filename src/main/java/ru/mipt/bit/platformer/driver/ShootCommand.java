@@ -1,7 +1,7 @@
 package ru.mipt.bit.platformer.driver;
 
 import ru.mipt.bit.platformer.logic.Command;
-import ru.mipt.bit.platformer.logic.GameState;
+import ru.mipt.bit.platformer.logic.Level;
 import ru.mipt.bit.platformer.logic.Tank;
 
 /**
@@ -10,15 +10,15 @@ import ru.mipt.bit.platformer.logic.Tank;
 public class ShootCommand implements Command {
 
     private final Tank tank;
-    private final GameState gameState;
+    private final Level level;
 
-    public ShootCommand(final Tank tank, final GameState gameState) {
+    public ShootCommand(final Tank tank, final Level level) {
         this.tank = tank;
-        this.gameState = gameState;
+        this.level = level;
     }
 
     @Override
     public void execute() {
-        gameState.shoot(tank);
+        level.shoot(tank);
     }
 }
