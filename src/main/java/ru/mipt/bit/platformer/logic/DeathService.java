@@ -230,7 +230,6 @@ public class DeathService {
 
         void apply() {
             getTank().ifPresent(tank -> tank.reduceHealth(bullet.getDamage()));
-            bullet.setDead();
         }
 
         float getHitTime() {

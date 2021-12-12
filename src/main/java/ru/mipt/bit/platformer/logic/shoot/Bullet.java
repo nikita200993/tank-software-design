@@ -12,7 +12,6 @@ public class Bullet implements GameObjectView {
     private final int damage;
     private final Direction direction;
     private FloatPoint2D position;
-    private boolean dead;
 
 
     public Bullet(final float speed, final int damage, final Direction direction, final FloatPoint2D position) {
@@ -40,16 +39,8 @@ public class Bullet implements GameObjectView {
         return speed;
     }
 
-    public boolean isAlive() {
-        return !dead;
-    }
-
     public void update(final float time) {
         position = position.plus(FloatPoint2D.from(direction.unitVector()).multiply(time * speed));
-    }
-
-    public void setDead() {
-        this.dead = true;
     }
 
     public Direction getDirection() {
