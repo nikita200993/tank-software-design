@@ -1,9 +1,7 @@
 package ru.mipt.bit.platformer.logic;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import ru.mipt.bit.platformer.logic.shoot.Bullet;
 
@@ -42,15 +40,12 @@ public class Level {
 
     public void addListener(final GameLogicListener listener) {
         listeners.add(listener);
-        final var tanks = new ArrayList<>(gameObjects.getAiTanks());
         if (getPlayer().isAlive()) {
-            tanks.add(getPlayer());
+            notifyCreation(getPlayer());
         }
-        listener.onRegister(
-                tanks,
-                Collections.unmodifiableList(gameObjects.getObstacles()),
-                Collections.unmodifiableList(gameObjects.getBullets())
-        );
+        getAiTanks().forEach(this::notifyCreation);
+        getBullets().forEach(this::notifyCreation);
+        getObstacles().forEach(this::notifyCreation);
     }
 
     public Tank getPlayer() {
@@ -90,18 +85,15 @@ public class Level {
     public RectangleMap getRectangleMap() {
         return rectangleMap;
     }
-    
+
     void addBullet(final Bullet bullet) {
         if (rectangleMap.collides(bullet.position())) {
             return;
         }
         this.gameObjects.addBullet(bullet);
-        notifyOnBulletCreated(bullet);
+        notifyCreation(bullet);
     }
 
-    private void notifyOnBulletCreated(final Bullet bullet) {
-        listeners.forEach(it -> it.onBulletCreated(bullet));
-    }
 
     private void updateSurvived(final float deltaTime) {
         if (getPlayer().isAlive()) {
@@ -113,32 +105,25 @@ public class Level {
 
     private void processDeathsOnThisStep(final float timeTick) {
         final var deaths = deathService.computeDeathsFromHits(this, timeTick);
-        final var deadTanks = new ArrayList<Tank>();
-        final var deadBullets = new ArrayList<Bullet>();
         for (final var death : deaths) {
-            processBulletDeath(death.getBullet(), death.getDeathTime(), deadBullets);
-            death.getTank()
-                    .ifPresent(it -> processTankDeath(it, death.getDeathTime(), deadTanks));
+            gameObjects.removeDeadObject(death.getBullet());
+            death.getBullet().update(death.getDeathTime());
+            notifyDeath(death.getBullet());
+            if (death.getTank().isEmpty()) {
+                continue;
+            }
+            var tank = death.getTank().orElseThrow();
+            gameObjects.removeDeadObject(tank);
+            tank.update(death.getDeathTime());
+            notifyDeath(tank);
         }
-        notifyOnDeath(deadTanks, deadBullets);
     }
 
-    private void processTankDeath(final Tank tank, final float deathTime, final List<Tank> deadTanks) {
-        gameObjects.removeDeadObject(tank);
-        tank.update(deathTime);
-        deadTanks.add(tank);
+    private void notifyCreation(GameObjectView gameObjectView) {
+        listeners.forEach(it -> it.onEvent(new CreationEvent(gameObjectView)));
     }
 
-    private void processBulletDeath(final Bullet bullet, final float deathTime, final List<Bullet> bullets) {
-        gameObjects.removeDeadObject(bullet);
-        bullet.update(deathTime);
-        bullets.add(bullet);
-    }
-
-    private void notifyOnDeath(final List<Tank> deadTanks, final List<Bullet> deadBullets) {
-        for (final var listener : listeners) {
-            listener.onBulletsDeath(deadBullets);
-            listener.onTanksDeath(deadTanks);
-        }
+    private void notifyDeath(GameObjectView gameObjectView) {
+        listeners.forEach(it -> it.onEvent(new DeathEvent(gameObjectView)));
     }
 }

@@ -10,9 +10,14 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapRenderer;
+import ru.mipt.bit.platformer.logic.CreationEvent;
+import ru.mipt.bit.platformer.logic.DeathEvent;
+import ru.mipt.bit.platformer.logic.GameEvent;
 import ru.mipt.bit.platformer.logic.GameLogicListener;
 import ru.mipt.bit.platformer.logic.GameObjectView;
+import ru.mipt.bit.platformer.logic.Obstacle;
 import ru.mipt.bit.platformer.logic.Tank;
+import ru.mipt.bit.platformer.logic.shoot.Bullet;
 
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 
@@ -69,29 +74,27 @@ public class GameGraphics implements GameLogicListener {
     }
 
     @Override
-    public void onRegister(
-            final List<? extends Tank> tanks,
-            final List<? extends GameObjectView> trees,
-            final List<? extends GameObjectView> bullets
-    ) {
-        tanks.forEach(it -> gameObjectToRenderable.put(it, createTank(it)));
-        trees.forEach(it -> gameObjectToRenderable.put(it, createTree(it)));
-        bullets.forEach(it -> gameObjectToRenderable.put(it, createBullet(it)));
+    public void onEvent(GameEvent<? extends GameObjectView> gameEvent) {
+        if (gameEvent instanceof CreationEvent) {
+            onCreation((CreationEvent) gameEvent);
+        } else if (gameEvent instanceof DeathEvent) {
+            onDeath((DeathEvent) gameEvent);
+        }
     }
 
-    @Override
-    public void onTanksDeath(final List<? extends GameObjectView> tank) {
-        dead.addAll(tank);
+    private void onCreation(CreationEvent creationEvent) {
+        var source = creationEvent.source();
+        if (source instanceof Tank) {
+            gameObjectToRenderable.put(source, createTank((Tank) source));
+        } else if (source instanceof Obstacle) {
+            gameObjectToRenderable.put(source, createTree(source));
+        } else if (source instanceof Bullet) {
+            gameObjectToRenderable.put(source, createBullet(source));
+        }
     }
 
-    @Override
-    public void onBulletsDeath(final List<? extends GameObjectView> bullets) {
-        dead.addAll(bullets);
-    }
-
-    @Override
-    public void onBulletCreated(final GameObjectView bullet) {
-        gameObjectToRenderable.put(bullet, createBullet(bullet));
+    private void onDeath(DeathEvent deathEvent) {
+        dead.add(deathEvent.source());
     }
 
     public UISettings getUiSettings() {
